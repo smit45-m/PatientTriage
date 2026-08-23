@@ -1,0 +1,137 @@
+{
+    "1": {
+        "description": "Immediate life-saving intervention required",
+        "criteria": [
+            "Requires immediate life-saving intervention",
+            "Unresponsive or altered mental status",
+            "Severe respiratory distress",
+            "SpO2 < 88% or severe hypoxia",
+            "SBP < 70 or profound shock"
+        ],
+        "examples": [
+            "Cardiac or respiratory arrest",
+            "Severe trauma or gunshot wound",
+            "Anaphylactic shock with severe airway compromise",
+            "Overdose with respiratory rate < 8"
+        ],
+        "routing": "Resuscitation Bay",
+        "time_to_physician": "Immediate"
+    },
+    "2": {
+        "description": "High risk situation, confused/lethargic/disoriented, or severe pain/distress",
+        "criteria": [
+            "High risk situation",
+            "Severe pain or distress (Pain >= 7)",
+            "Lethargic or confused",
+            "Danger zone vitals for age",
+            "SpO2 < 92% or SBP < 85"
+        ],
+        "examples": [
+            "Active chest pain suspicious for ACS",
+            "Signs of acute stroke (facial droop, weakness)",
+            "Severe abdominal pain in elderly",
+            "Suicidal patient, elopement risk"
+        ],
+        "routing": "Acute Care",
+        "time_to_physician": "< 10 minutes"
+    },
+    "3": {
+        "description": "Multiple resources required, normal danger zone vitals",
+        "criteria": [
+            "Requires 2 or more resources",
+            "Vitals outside danger zone limits",
+            "Moderate pain (Pain 4-6)",
+            "Moderate distress"
+        ],
+        "examples": [
+            "Abdominal pain requiring labs and CT",
+            "Closed fracture requiring x-ray and pain meds",
+            "Fever with cough requiring labs and chest x-ray"
+        ],
+        "routing": "Urgent Care",
+        "time_to_physician": "Up to 1 hour"
+    },
+    "4": {
+        "description": "One resource required",
+        "criteria": [
+            "Requires exactly 1 resource",
+            "Stable vital signs",
+            "Mild pain",
+            "No high risk features"
+        ],
+        "examples": [
+            "Minor laceration requiring sutures",
+            "Sore throat requiring strep test",
+            "Simple sprain requiring x-ray"
+        ],
+        "routing": "Fast Track",
+        "time_to_physician": "Up to 2 hours"
+    },
+    "5": {
+        "description": "No resources required",
+        "criteria": [
+            "Requires 0 resources",
+            "Stable vital signs",
+            "No distress",
+            "Minor complaints"
+        ],
+        "examples": [
+            "Suture removal",
+            "Medication refill",
+            "Minor rash without systemic symptoms",
+            "Work note request"
+        ],
+        "routing": "Waiting Room",
+        "time_to_physician": "Non-urgent"
+    },
+    "chest_pain": {
+        "description": "Chest pain triage guidelines",
+        "criteria": ["Evaluate for STEMI", "Check EKG within 10 mins"],
+        "examples": ["Crushing chest pain (ESI-2)"]
+    },
+    "stroke": {
+        "description": "Stroke triage guidelines",
+        "criteria": ["Last known well", "Activate stroke team"],
+        "examples": ["Facial droop (ESI-2)"]
+    },
+    "pediatric_fever": {
+        "description": "Pediatric fever triage",
+        "criteria": ["Age < 28 days -> ESI-2"],
+        "examples": ["Infant with 39C (ESI-2)"]
+    },
+    "altered_mental_status": {
+        "description": "AMS guidelines",
+        "criteria": ["Check blood glucose", "Consider naloxone"],
+        "examples": ["Unresponsive (ESI-1)"]
+    },
+    "trauma": {
+        "description": "Trauma activation",
+        "criteria": ["Mechanism of injury", "GCS score"],
+        "examples": ["Major auto accident (ESI-1)"]
+    },
+    "overdose": {
+        "description": "Overdose guidelines",
+        "criteria": ["Respiratory rate", "Pupils"],
+        "examples": ["Heroin OD, RR 6 (ESI-1)"]
+    },
+    "hemorrhage": {
+        "description": "Hemorrhage guidelines",
+        "criteria": ["Apply pressure", "Tourniquet"],
+        "examples": ["Arterial bleed (ESI-1)"]
+    },
+    "respiratory_distress": {
+        "description": "Respiratory guidelines",
+        "criteria": ["Work of breathing", "SpO2"],
+        "examples": ["Severe asthma exacerbation (ESI-1 or 2)"]
+    },
+    "pregnancy_emergency": {
+        "description": "Pregnancy guidelines",
+        "criteria": ["Gestational age", "Vaginal bleeding"],
+        "examples": ["Ectopic rupture (ESI-1)"]
+    },
+    "geriatric_fall": {
+        "description": "Geriatric fall",
+        "criteria": ["Blood thinners", "Head injury"],
+        "examples": ["Fall on eliquis (ESI-2)"]
+    }
+}

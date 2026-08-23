@@ -1,0 +1,543 @@
+{
+  "n_samples": 250,
+  "auroc_5class": 0.9253269061624877,
+  "auroc_binary": 0.9794559999999999,
+  "esi1_recall": 1.0,
+  "under_triage_rate": 0.064,
+  "under_triage_cases": [
+    {
+      "patient_id": "ADV-003",
+      "name": "Stress Case 3",
+      "age": 59,
+      "sex": "F",
+      "cc": "21-year-old with inversion ankle injury playing basketball, swollen lateral malleolus, limping.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6424,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 81,
+        "sbp": 135,
+        "dbp": 71,
+        "spo2": 98,
+        "rr": 18,
+        "temp": 36.6,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 59-year-old F presenting with \"21-year-old with inversion ankle injury playing basketball, swollen lateral malleolus, limping.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (64%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-013",
+      "name": "Stress Case 13",
+      "age": 59,
+      "sex": "M",
+      "cc": "25-year-old with acute anxiety, tingling around mouth, hyperventilating, stressful exam week.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6516,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 77,
+        "sbp": 127,
+        "dbp": 78,
+        "spo2": 98,
+        "rr": 12,
+        "temp": 37.0,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 59-year-old M presenting with \"25-year-old with acute anxiety, tingling around mouth, hyperventilating, stressful exam week.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (65%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-016",
+      "name": "Stress Case 16",
+      "age": 35,
+      "sex": "F",
+      "cc": "62-year-old with painful, swollen, warm left calf after a 12-hour flight, no chest pain.",
+      "category": "ESI-3 Abdominal / Infection / Moderate Trauma",
+      "true_esi": 3,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.4125,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 92,
+        "sbp": 126,
+        "dbp": 76,
+        "spo2": 97,
+        "rr": 19,
+        "temp": 36.9,
+        "pain": 5
+      },
+      "rules": [],
+      "rationale": "This 35-year-old F presenting with \"62-year-old with painful, swollen, warm left calf after a 12-hour flight, no chest pain.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (41%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-030",
+      "name": "Stress Case 30",
+      "age": 55,
+      "sex": "F",
+      "cc": "25-year-old with acute anxiety, tingling around mouth, hyperventilating, stressful exam week.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6541,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 76,
+        "sbp": 123,
+        "dbp": 66,
+        "spo2": 97,
+        "rr": 15,
+        "temp": 36.5,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 55-year-old F presenting with \"25-year-old with acute anxiety, tingling around mouth, hyperventilating, stressful exam week.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (65%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-049",
+      "name": "Stress Case 49",
+      "age": 47,
+      "sex": "M",
+      "cc": "33-year-old with painful red furuncle on left thigh, 2cm diameter, fluctuant center.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6622,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 82,
+        "sbp": 123,
+        "dbp": 75,
+        "spo2": 98,
+        "rr": 13,
+        "temp": 37.5,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 47-year-old M presenting with \"33-year-old with painful red furuncle on left thigh, 2cm diameter, fluctuant center.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (66%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-053",
+      "name": "Stress Case 53",
+      "age": 21,
+      "sex": "F",
+      "cc": "44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.5652,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 78,
+        "sbp": 121,
+        "dbp": 74,
+        "spo2": 98,
+        "rr": 11,
+        "temp": 37.3,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 21-year-old F presenting with \"44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (57%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-070",
+      "name": "Stress Case 70",
+      "age": 73,
+      "sex": "M",
+      "cc": "45-year-old with burning epigastric discomfort after spicy meal, mild epigastric tenderness.",
+      "category": "ESI-3 Abdominal / Infection / Moderate Trauma",
+      "true_esi": 3,
+      "pred_esi": 4,
+      "action": "ESCALATE",
+      "confidence": 0.5841,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 77,
+        "sbp": 141,
+        "dbp": 92,
+        "spo2": 95,
+        "rr": 17,
+        "temp": 38.1,
+        "pain": 6
+      },
+      "rules": [],
+      "rationale": "This 73-year-old M presenting with \"45-year-old with burning epigastric discomfort after spicy meal, mild epigastric tenderness.\" meets ESI-4 criteria: One resource required. Vital signs within normal parameters. GERIATRIC ALERT: Elderly patients often present atypically \u2014 absence of fever does not exclude infection, and baseline vital signs may mask deterioration. Polypharmacy interactions and fall risk must be assessed. Lower threshold for admission recommended. AI confidence is low (58%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-076",
+      "name": "Stress Case 76",
+      "age": 51,
+      "sex": "F",
+      "cc": "25-year-old with acute anxiety, tingling around mouth, hyperventilating, stressful exam week.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6337,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 77,
+        "sbp": 134,
+        "dbp": 71,
+        "spo2": 99,
+        "rr": 18,
+        "temp": 37.2,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 51-year-old F presenting with \"25-year-old with acute anxiety, tingling around mouth, hyperventilating, stressful exam week.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (63%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-090",
+      "name": "Stress Case 90",
+      "age": 49,
+      "sex": "F",
+      "cc": "45-year-old with sudden severe 10/10 epigastric pain radiating to back, history of gallstones.",
+      "category": "ESI-2 Acute Surgical / OB Emergencies",
+      "true_esi": 2,
+      "pred_esi": 3,
+      "action": "ESCALATE",
+      "confidence": 0.4364,
+      "severity": "CRITICAL RISK",
+      "vitals": {
+        "hr": 93,
+        "sbp": 125,
+        "dbp": 65,
+        "spo2": 98,
+        "rr": 26,
+        "temp": 38.5,
+        "pain": 9
+      },
+      "rules": [],
+      "rationale": "This 49-year-old F presenting with \"45-year-old with sudden severe 10/10 epigastric pain radiating to back, history of gallstones.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Severe pain reported (9/10). AI confidence is low (44%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-157",
+      "name": "Stress Case 157",
+      "age": 62,
+      "sex": "M",
+      "cc": "44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.5807,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 78,
+        "sbp": 116,
+        "dbp": 85,
+        "spo2": 98,
+        "rr": 18,
+        "temp": 37.7,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 62-year-old M presenting with \"44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (58%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-214",
+      "name": "Stress Case 214",
+      "age": 59,
+      "sex": "M",
+      "cc": "55-year-old with painful swollen first metatarsophalangeal joint (gout flare), no fever.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6187,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 72,
+        "sbp": 119,
+        "dbp": 70,
+        "spo2": 98,
+        "rr": 14,
+        "temp": 37.2,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 59-year-old M presenting with \"55-year-old with painful swollen first metatarsophalangeal joint (gout flare), no fever.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (62%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-215",
+      "name": "Stress Case 215",
+      "age": 22,
+      "sex": "M",
+      "cc": "28-year-old with 3cm clean laceration on forearm from glass cup, bleeding stopped with pressure.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6303,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 66,
+        "sbp": 131,
+        "dbp": 83,
+        "spo2": 99,
+        "rr": 11,
+        "temp": 36.8,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 22-year-old M presenting with \"28-year-old with 3cm clean laceration on forearm from glass cup, bleeding stopped with pressure.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (63%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-217",
+      "name": "Stress Case 217",
+      "age": 76,
+      "sex": "M",
+      "cc": "72-year-old on warfarin with spontaneous large epistaxis not stopping after 45 mins of pressure.",
+      "category": "ESI-2 Geriatric Sepsis & High Risk",
+      "true_esi": 2,
+      "pred_esi": 3,
+      "action": "ESCALATE",
+      "confidence": 0.6233,
+      "severity": "CRITICAL RISK",
+      "vitals": {
+        "hr": 106,
+        "sbp": 119,
+        "dbp": 54,
+        "spo2": 95,
+        "rr": 29,
+        "temp": 37.4,
+        "pain": 5
+      },
+      "rules": [],
+      "rationale": "This 76-year-old M presenting with \"72-year-old on warfarin with spontaneous large epistaxis not stopping after 45 mins of pressure.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Vital signs within normal parameters. GERIATRIC ALERT: Elderly patients often present atypically \u2014 absence of fever does not exclude infection, and baseline vital signs may mask deterioration. Polypharmacy interactions and fall risk must be assessed. Lower threshold for admission recommended. AI confidence is low (62%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-230",
+      "name": "Stress Case 230",
+      "age": 22,
+      "sex": "M",
+      "cc": "44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "true_esi": 4,
+      "pred_esi": 5,
+      "action": "ESCALATE",
+      "confidence": 0.6211,
+      "severity": "MODERATE RISK",
+      "vitals": {
+        "hr": 87,
+        "sbp": 122,
+        "dbp": 76,
+        "spo2": 98,
+        "rr": 20,
+        "temp": 37.0,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 22-year-old M presenting with \"44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.\" meets ESI-5 criteria: No resources required. Vital signs within normal parameters. AI confidence is low (62%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-238",
+      "name": "Stress Case 238",
+      "age": 30,
+      "sex": "M",
+      "cc": "45-year-old with sudden severe 10/10 epigastric pain radiating to back, history of gallstones.",
+      "category": "ESI-2 Acute Surgical / OB Emergencies",
+      "true_esi": 2,
+      "pred_esi": 3,
+      "action": "ESCALATE",
+      "confidence": 0.6238,
+      "severity": "CRITICAL RISK",
+      "vitals": {
+        "hr": 96,
+        "sbp": 101,
+        "dbp": 79,
+        "spo2": 96,
+        "rr": 28,
+        "temp": 37.8,
+        "pain": 10
+      },
+      "rules": [],
+      "rationale": "This 30-year-old M presenting with \"45-year-old with sudden severe 10/10 epigastric pain radiating to back, history of gallstones.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Shock Index concerning at 0.95, approaching critical threshold. Severe pain reported (10/10). AI confidence is low (62%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-239",
+      "name": "Stress Case 239",
+      "age": 22,
+      "sex": "M",
+      "cc": "45-year-old with sudden severe 10/10 epigastric pain radiating to back, history of gallstones.",
+      "category": "ESI-2 Acute Surgical / OB Emergencies",
+      "true_esi": 2,
+      "pred_esi": 4,
+      "action": "ESCALATE",
+      "confidence": 0.3546,
+      "severity": "CRITICAL RISK",
+      "vitals": {
+        "hr": 108,
+        "sbp": 127,
+        "dbp": 63,
+        "spo2": 96,
+        "rr": 20,
+        "temp": 38.0,
+        "pain": 8
+      },
+      "rules": [],
+      "rationale": "This 22-year-old M presenting with \"45-year-old with sudden severe 10/10 epigastric pain radiating to back, history of gallstones.\" meets ESI-4 criteria: One resource required. Severe pain reported (8/10). AI confidence is low (35%). Senior clinician review strongly recommended."
+    }
+  ],
+  "over_triage_cases": [
+    {
+      "patient_id": "ADV-006",
+      "true_esi": 4,
+      "pred_esi": 2,
+      "cc": "28-year-old with 3cm clean laceration on forearm from glass cup, bleeding stopped with pressure.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "vitals": {
+        "hr": 92,
+        "sbp": 128,
+        "dbp": 87,
+        "spo2": 97,
+        "rr": 21,
+        "temp": 36.9,
+        "pain": 6
+      },
+      "rules": [],
+      "rationale": "This 62-year-old M presenting with \"28-year-old with 3cm clean laceration on forearm from glass cup, bleeding stopped with pressure.\" meets ESI-2 criteria: High risk situation, confused/lethargic/disoriented, or severe pain/distress. Vital signs within normal parameters. AI confidence is low (37%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-012",
+      "true_esi": 5,
+      "pred_esi": 1,
+      "cc": "19-year-old requesting suture removal from clean healed scalp wound from 10 days ago.",
+      "category": "ESI-5 Fast Track / Prescription / Minor",
+      "vitals": {
+        "hr": 71,
+        "sbp": 115,
+        "dbp": 77,
+        "spo2": 100,
+        "rr": 15,
+        "temp": 36.6,
+        "pain": 1
+      },
+      "rules": [],
+      "rationale": "This 55-year-old M presenting with \"19-year-old requesting suture removal from clean healed scalp wound from 10 days ago.\" meets ESI-1 criteria: Immediate life-saving intervention required. Vital signs within normal parameters. AI confidence is low (45%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-143",
+      "true_esi": 4,
+      "pred_esi": 2,
+      "cc": "44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.",
+      "category": "ESI-4 Minor Lacerations / Strains / Localized",
+      "vitals": {
+        "hr": 93,
+        "sbp": 118,
+        "dbp": 74,
+        "spo2": 100,
+        "rr": 19,
+        "temp": 37.1,
+        "pain": 3
+      },
+      "rules": [],
+      "rationale": "This 47-year-old F presenting with \"44-year-old with acute lumbar muscle spasm after lifting heavy box, normal sensation and strength.\" meets ESI-2 criteria: High risk situation, confused/lethargic/disoriented, or severe pain/distress. Vital signs within normal parameters. AI confidence is low (30%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-149",
+      "true_esi": 3,
+      "pred_esi": 1,
+      "cc": "22-year-old with persistent vomiting for 24 hours, unable to keep liquids down, mild dry mucous membranes.",
+      "category": "ESI-3 Abdominal / Infection / Moderate Trauma",
+      "vitals": {
+        "hr": 110,
+        "sbp": 120,
+        "dbp": 88,
+        "spo2": 96,
+        "rr": 18,
+        "temp": 37.5,
+        "pain": 5
+      },
+      "rules": [
+        "Shock index critical"
+      ],
+      "rationale": "This 69-year-old F presenting with \"22-year-old with persistent vomiting for 24 hours, unable to keep liquids down, mild dry mucous membranes.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index concerning at 0.92, approaching critical threshold. Safety system triggered 1 rule(s): Shock index critical. Required actions: Evaluate for shock. GERIATRIC ALERT: Elderly patients often present atypically \u2014 absence of fever does not exclude infection, and baseline vital signs may mask deterioration. Polypharmacy interactions and fall risk must be assessed. Lower threshold for admission recommended. AI confidence is low (51%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-198",
+      "true_esi": 5,
+      "pred_esi": 3,
+      "cc": "24-year-old with localized poison ivy contact dermatitis on forearm, mild itch, no spreading.",
+      "category": "ESI-5 Fast Track / Prescription / Minor",
+      "vitals": {
+        "hr": 73,
+        "sbp": 134,
+        "dbp": 77,
+        "spo2": 100,
+        "rr": 13,
+        "temp": 36.2,
+        "pain": 2
+      },
+      "rules": [],
+      "rationale": "This 23-year-old M presenting with \"24-year-old with localized poison ivy contact dermatitis on forearm, mild itch, no spreading.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Vital signs within normal parameters. AI confidence is low (34%). Senior clinician review strongly recommended."
+    },
+    {
+      "patient_id": "ADV-219",
+      "true_esi": 5,
+      "pred_esi": 3,
+      "cc": "19-year-old requesting suture removal from clean healed scalp wound from 10 days ago.",
+      "category": "ESI-5 Fast Track / Prescription / Minor",
+      "vitals": {
+        "hr": 68,
+        "sbp": 110,
+        "dbp": 79,
+        "spo2": 100,
+        "rr": 10,
+        "temp": 36.9,
+        "pain": 1
+      },
+      "rules": [],
+      "rationale": "This 40-year-old M presenting with \"19-year-old requesting suture removal from clean healed scalp wound from 10 days ago.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Vital signs within normal parameters. AI confidence is low (55%). Senior clinician review strongly recommended."
+    }
+  ],
+  "rag_issues": [],
+  "confusion_matrix": [
+    [
+      50,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      65,
+      6,
+      3,
+      1,
+      0
+    ],
+    [
+      1,
+      13,
+      49,
+      1,
+      1
+    ],
+    [
+      0,
+      2,
+      4,
+      19,
+      10
+    ],
+    [
+      1,
+      0,
+      2,
+      0,
+      22
+    ]
+  ]
+}

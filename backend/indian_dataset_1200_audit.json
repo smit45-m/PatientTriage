@@ -1,0 +1,12 @@
+{
+  "cohort_size": 1200,
+  "rag_auroc_5class": 0.8993,
+  "rag_auroc_binary": 0.9884,
+  "rag_esi1_recall": 1.0,
+  "rag_under_triage": 0.045,
+  "rag_mean_latency_ms": 208.41,
+  "llm_esi1_recall": 0.94,
+  "llm_under_triage": 0.0467,
+  "llm_mean_latency_ms": 1452.69,
+  "llm_hallucination_rate": 0.0225
+}

@@ -1,0 +1,69 @@
+{
+  "cohort_size": 1000,
+  "total_time_sec": 228.18,
+  "auroc_5class": 0.932,
+  "auroc_binary": 0.9775,
+  "esi1_recall": 1.0,
+  "esi2_safe_containment": 0.98,
+  "under_triage_rate": 0.051,
+  "critical_under_triage_rate": 0.0133,
+  "within_1_accuracy": 0.973,
+  "exact_match": 0.594,
+  "mean_latency_ms": 228.16,
+  "p99_latency_ms": 304.33,
+  "confusion_matrix": [
+    [
+      150,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      245,
+      49,
+      6,
+      0,
+      0
+    ],
+    [
+      3,
+      67,
+      254,
+      26,
+      0
+    ],
+    [
+      1,
+      3,
+      16,
+      81,
+      19
+    ],
+    [
+      9,
+      0,
+      11,
+      0,
+      60
+    ]
+  ],
+  "rag_metrics": {
+    "mean_length_chars": 650.3,
+    "hallucination_rate": 0.0,
+    "vital_grounding_rate": 0.879,
+    "pediatric_alerts": 91,
+    "geriatric_alerts": 248,
+    "guideline_citations": {
+      "AHA_Chest_Pain": 27,
+      "ASA_Stroke_FAST": 13,
+      "ACEP_SAH": 16,
+      "Surviving_Sepsis": 19,
+      "AES_Seizure": 8,
+      "ATLS_ENLS_Coma": 33,
+      "WAO_Anaphylaxis": 44,
+      "ACOG_ACS_Surgical": 115,
+      "ESI_Handbook_v4": 1000
+    }
+  }
+}
