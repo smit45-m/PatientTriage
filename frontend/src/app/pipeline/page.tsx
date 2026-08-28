@@ -11,6 +11,7 @@ const AGENT_SPECS = [
   {
     step: '01',
     id: 'intake', name: 'Intake & Clinical Scoring', icon: ClipboardList, color: '#6d28d9',
+    image: '/medical/ecg_monitor.jpg',
     summary: 'Validates vital signs against age-stratified thresholds (pediatric / adult / geriatric) and calculates derived physiological scores.',
     inputs: ['Heart Rate, Blood Pressure, SpO2, Respiratory Rate, Temperature, Pain Scale', 'Patient demographics (age, sex, arrival mode)'],
     outputs: ['Shock Index (HR/SBP)', 'Modified Early Warning Score (MEWS)', 'Mean Arterial Pressure (MAP)', 'Vital sign anomaly flags per age group'],
@@ -28,6 +29,7 @@ const AGENT_SPECS = [
   {
     step: '02',
     id: 'ml_nlp', name: 'ML & NLP Prediction Fusion', icon: Brain, color: '#7c3aed',
+    image: '/medical/triage_desk.jpg',
     summary: 'Combines tabular ML (XGBoost on 13 features) with 5-tier NLP text analysis via weighted late fusion for ESI prediction.',
     inputs: ['13 clinical features (vitals + derived scores)', 'Free-text chief complaint', 'Fusion weights: ML=0.65, NLP=0.35'],
     outputs: ['5-class ESI probability distribution', 'NLP urgency classification with keyword matching', 'Entropy-based confidence score with agreement bonus'],
@@ -42,6 +44,7 @@ const AGENT_SPECS = [
   {
     step: '03',
     id: 'safety', name: 'Clinical Safety Governance', icon: ShieldAlert, color: '#dc2626',
+    image: '/medical/surgery_lights.jpg',
     summary: 'Enforces 18 hard-coded safety rules with asymmetric loss (20x under-triage penalty) and confidence-based action governance.',
     inputs: ['Fused prediction probabilities', 'Active vital sign flags (tachycardia, hypotension, etc.)', 'NLP semantic alerts (stroke, sepsis, cardiac arrest)'],
     outputs: ['Safety rule overrides (automatic ESI-1 for life threats)', 'Adjusted prediction with asymmetric bias', 'Action type: DECIDE / ESCALATE / RECOMMEND'],
@@ -59,6 +62,7 @@ const AGENT_SPECS = [
   {
     step: '04',
     id: 'rag', name: 'RAG Clinical Explainer', icon: BookOpen, color: '#4f46e5',
+    image: '/medical/doctor_tablet.jpg',
     summary: 'Generates clinical rationale grounded in ESI Handbook v4, AHA, ASA, and Surviving Sepsis Campaign protocols.',
     inputs: ['Assigned ESI level and action type', 'Active protocols and safety overrides', 'Calculated vital narratives and severity markers'],
     outputs: ['Plain-English clinical rationale', 'Protocol-specific action checklist', 'Pediatric/geriatric special considerations'],
@@ -75,6 +79,7 @@ const AGENT_SPECS = [
   {
     step: '05',
     id: 'cockpit', name: 'Decision Cockpit & Audit', icon: MonitorCheck, color: '#059669',
+    image: '/medical/emergency_bay.jpg',
     summary: 'Determines hospital routing, computes feature importance via SHAP, and writes immutable audit records.',
     inputs: ['Final ESI assignment', 'ML feature importance matrix', 'Clinician identification and session metadata'],
     outputs: ['Target routing (Resuscitation Bay → Waiting Room)', 'Top-5 SHAP feature attributions', 'Timestamped immutable audit log entry'],
@@ -115,7 +120,7 @@ export default function PipelinePage() {
         </div>
       </div>
 
-      {/* Stage Selector (01 to 05) */}
+      {/* Stage Selector (01 to 05) with Thumbnails */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {AGENT_SPECS.map((node, i) => {
           const NodeIcon = node.icon;
@@ -124,7 +129,7 @@ export default function PipelinePage() {
             <button
               key={node.id}
               onClick={() => setActiveIdx(i)}
-              className={`p-4 rounded-2xl text-left transition-all duration-200 border ${
+              className={`p-3.5 rounded-2xl text-left transition-all duration-200 border overflow-hidden relative group ${
                 isActive
                   ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm ring-2 ring-purple-500/20'
                   : 'bg-white border-slate-200/80 hover:border-purple-200 hover:bg-slate-50 shadow-card'
@@ -157,7 +162,7 @@ export default function PipelinePage() {
           transition={{ duration: 0.2 }}
           className="grid grid-cols-1 lg:grid-cols-12 gap-6"
         >
-          {/* Left — Description + I/O (7 cols) */}
+          {/* Left — Description + Image + I/O (7 cols) */}
           <div className="lg:col-span-7 bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card space-y-5">
             <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
               <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-purple-50 border border-purple-200">
@@ -172,9 +177,23 @@ export default function PipelinePage() {
               </div>
             </div>
 
+            {/* Medical Context Image Banner */}
+            <div className="relative h-36 w-full rounded-2xl overflow-hidden border border-slate-200/60 shadow-xs">
+              <img
+                src={active.image}
+                alt={active.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent flex items-end p-3.5">
+                <span className="text-xs font-bold text-white tracking-wide">
+                  Clinical Environment: {active.name}
+                </span>
+              </div>
+            </div>
+
             <p className="text-xs text-slate-600 font-medium leading-relaxed">{active.summary}</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                   <ArrowRight className="w-3.5 h-3.5 text-purple-700" /> Inputs

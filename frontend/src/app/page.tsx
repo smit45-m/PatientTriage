@@ -1,11 +1,10 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Activity, Cpu, Monitor, Shield, BarChart3, ArrowRight,
   Sparkles, CheckCircle2, ChevronRight, Stethoscope, Clock, Zap, HeartPulse,
-  UserCheck, Award, Star
+  Award, Bed, Ambulance, Radio, ShieldCheck, Microscope
 } from 'lucide-react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import GlassCard from '@/components/GlassCard';
@@ -45,6 +44,41 @@ const DOCTORS = [
   },
 ];
 
+const CLINICAL_ENVIRONMENTS = [
+  {
+    title: 'Emergency Resuscitation Bay',
+    subtitle: 'ESI-1 Immediate Intervention',
+    desc: 'Equipped for immediate cardiopulmonary resuscitation, rapid-sequence intubation, and continuous telemetry monitoring.',
+    image: '/medical/emergency_bay.jpg',
+    icon: Bed,
+    badge: 'Red Zone Bay',
+  },
+  {
+    title: 'Continuous Vital Telemetry',
+    subtitle: 'Multiparameter Physiological Monitoring',
+    desc: 'Real-time computation of Shock Index, MEWS, and MAP with instantaneous threshold alert dispatch.',
+    image: '/medical/ecg_monitor.jpg',
+    icon: Radio,
+    badge: 'Real-Time ECG',
+  },
+  {
+    title: 'Bedside Tablet Decision Cockpit',
+    subtitle: 'Point-of-Care LangGraph AI',
+    desc: 'Sub-second acuity scoring and ESI Handbook v4 rationales displayed directly on mobile tablets for nurses and attendings.',
+    image: '/medical/doctor_tablet.jpg',
+    icon: Stethoscope,
+    badge: 'Mobile EMR',
+  },
+  {
+    title: 'EMS Ambulance Transport & Intake',
+    subtitle: 'Pre-Hospital Triage Hand-Off',
+    desc: 'Seamless integration with field paramedics to prepare critical trauma bays prior to patient arrival.',
+    image: '/medical/ambulance_ems.jpg',
+    icon: Ambulance,
+    badge: 'EMS Dispatch',
+  },
+];
+
 export default function DashboardHome() {
   return (
     <main className="flex-1 px-6 py-10 max-w-7xl mx-auto w-full space-y-16">
@@ -53,7 +87,8 @@ export default function DashboardHome() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Title & Heading */}
           <div className="lg:col-span-7 space-y-4">
-            <span className="text-xs font-bold tracking-widest text-slate-500 uppercase">
+            <span className="text-xs font-bold tracking-widest text-slate-500 uppercase flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-purple-700" />
               Main Clinical Objective
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-[52px] font-black text-slate-900 leading-[1.15] tracking-tight">
@@ -91,22 +126,29 @@ export default function DashboardHome() {
           </div>
         </div>
 
-        {/* 3 Objective Pillar Cards (01, 02, 03) */}
+        {/* 3 Objective Pillar Cards with Medical Visual Accents (01, 02, 03) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
           {/* Card 01 */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card flex flex-col items-center text-center space-y-4 hover:shadow-card-hover hover:border-purple-200 transition-all"
+            className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-card flex flex-col space-y-4 hover:shadow-card-hover hover:border-purple-200 transition-all overflow-hidden relative group"
           >
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-xs font-bold text-slate-600">
-              01
+            <div className="relative h-28 w-full rounded-2xl overflow-hidden mb-1">
+              <img
+                src="/medical/triage_desk.jpg"
+                alt="Clinical Intake Desk"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 flex items-center justify-center text-xs font-black text-slate-800 shadow-sm">
+                01
+              </div>
             </div>
             <div className="space-y-1.5">
-              <h3 className="text-xl font-black text-slate-900">Cleaned</h3>
+              <h3 className="text-lg font-black text-slate-900">Cleaned</h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                the intake stream of transcription noise, missing fields, and clinical vital sign ambiguity.
+                the intake stream of transcription noise, missing fields, and vital sign ambiguity with age-stratified thresholds.
               </p>
             </div>
           </motion.div>
@@ -116,15 +158,22 @@ export default function DashboardHome() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card flex flex-col items-center text-center space-y-4 hover:shadow-card-hover hover:border-purple-200 transition-all"
+            className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-card flex flex-col space-y-4 hover:shadow-card-hover hover:border-purple-200 transition-all overflow-hidden relative group"
           >
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-xs font-bold text-slate-600">
-              02
+            <div className="relative h-28 w-full rounded-2xl overflow-hidden mb-1">
+              <img
+                src="/medical/ecg_monitor.jpg"
+                alt="ECG & Vitals Telemetry"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 flex items-center justify-center text-xs font-black text-slate-800 shadow-sm">
+                02
+              </div>
             </div>
             <div className="space-y-1.5">
-              <h3 className="text-xl font-black text-slate-900">Restructured</h3>
+              <h3 className="text-lg font-black text-slate-900">Restructured</h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                complex multimodal patient data into clear, physiological risk blocks with MEWS & Shock Index.
+                complex multimodal physiological and NLP data into clear, physiological risk blocks with MEWS & Shock Index.
               </p>
             </div>
           </motion.div>
@@ -134,13 +183,20 @@ export default function DashboardHome() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card flex flex-col items-center text-center space-y-4 hover:shadow-card-hover hover:border-purple-200 transition-all"
+            className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-card flex flex-col space-y-4 hover:shadow-card-hover hover:border-purple-200 transition-all overflow-hidden relative group"
           >
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-xs font-bold text-slate-600">
-              03
+            <div className="relative h-28 w-full rounded-2xl overflow-hidden mb-1">
+              <img
+                src="/medical/emergency_bay.jpg"
+                alt="Emergency Resuscitation Bay"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 flex items-center justify-center text-xs font-black text-slate-800 shadow-sm">
+                03
+              </div>
             </div>
             <div className="space-y-1.5">
-              <h3 className="text-xl font-black text-slate-900">Created</h3>
+              <h3 className="text-lg font-black text-slate-900">Created</h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
                 a streamlined 5-stage AI decision funnel for sub-second ESI validation & automated department routing.
               </p>
@@ -314,7 +370,60 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 3: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
+      {/* ── Section 3: Clinical Environments & Equipment Showcase ────── */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+              Emergency Infrastructure
+            </span>
+            <h2 className="text-2xl font-black text-slate-900">
+              Clinical Environments & <span className="text-purple-700">Point-of-Care Units</span>
+            </h2>
+          </div>
+          <span className="text-xs text-purple-700 font-bold bg-purple-50 px-3 py-1.5 rounded-full border border-purple-200/60">
+            Level I Trauma Standard
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {CLINICAL_ENVIRONMENTS.map((env, idx) => (
+            <motion.div
+              key={env.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.08 }}
+              className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-card-hover hover:border-purple-200 transition-all group"
+            >
+              <div className="relative h-36 w-full overflow-hidden">
+                <img
+                  src={env.image}
+                  alt={env.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <span className="absolute top-3 right-3 text-[10px] font-bold text-purple-950 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-xs border border-white/40">
+                  {env.badge}
+                </span>
+              </div>
+
+              <div className="p-5 space-y-2">
+                <div className="flex items-center gap-2 text-purple-700">
+                  <env.icon className="w-4 h-4" />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">{env.subtitle}</span>
+                </div>
+                <h4 className="text-sm font-black text-slate-900 group-hover:text-purple-700 transition-colors">
+                  {env.title}
+                </h4>
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                  {env.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Section 4: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -367,7 +476,7 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 4: Core Module Cards ──────────────────────────────── */}
+      {/* ── Section 5: Core Module Cards ──────────────────────────────── */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

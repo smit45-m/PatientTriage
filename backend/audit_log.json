@@ -2244,5 +2244,95 @@
     "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Code Blue / 12-lead ECG STAT, cath lab activation, Evaluate for shock. AI confidence is moderate (84%). Clinical correlation advised.",
     "override": null,
     "type": "triage"
+  },
+  {
+    "event_id": "0fbb3eb8-c609-4343-a28b-c005505acade",
+    "timestamp": "2026-08-28T13:46:20.454973+00:00",
+    "patient_id": "P-001",
+    "patient_name": "John Doe",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 1.29,
+      "mews": 4,
+      "map": 65.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 2,
+      "probabilities": [
+        0.027624931186437607,
+        0.9699011445045471,
+        0.0017964179860427976,
+        0.0005299286567606032,
+        0.0001475827011745423
+      ],
+      "confidence": 0.9699011445045471,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "chest pain",
+        "diaphoretic"
+      ],
+      "semantic_flags": [
+        "cardiac_critical"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 2,
+      "confidence": 0.84,
+      "probabilities": [
+        0.4112,
+        0.5694,
+        0.01,
+        0.0048,
+        0.0046
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=1.29",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R016",
+        "rule_name": "Critical Cardiac Event / Arrest Threat",
+        "triggered_by": "NLP: Crushing chest pain/Syncope/Arrest",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Code Blue / 12-lead ECG STAT, cath lab activation"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "medium",
+    "final_esi": 1,
+    "final_confidence": 0.84,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Code Blue / 12-lead ECG STAT, cath lab activation, Evaluate for shock. AI confidence is moderate (84%). Clinical correlation advised.",
+    "override": null,
+    "type": "triage"
   }
 ]
