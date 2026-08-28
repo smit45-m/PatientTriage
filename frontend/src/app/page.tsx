@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Activity, Cpu, Monitor, Shield, BarChart3, ArrowRight,
   Sparkles, CheckCircle2, ChevronRight, Stethoscope, Clock, Zap, HeartPulse,
-  Award, Bed, Ambulance, Radio, ShieldCheck, Microscope
+  Award, Bed, Ambulance, Radio, ShieldCheck, Microscope, UserCheck, HeartHandshake
 } from 'lucide-react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import GlassCard from '@/components/GlassCard';
@@ -41,6 +41,33 @@ const DOCTORS = [
     specialty: 'Mass Casualty & Hemorrhage Protocol',
     image: '/doctors/dr_marcus_vance.jpg',
     badge: 'Trauma Specialist',
+  },
+];
+
+const PATIENT_CARE_SCENARIOS = [
+  {
+    title: 'Bedside Clinical Auscultation & Exam',
+    tag: 'Direct Patient Assessment',
+    desc: 'Physicians perform targeted physical examinations while the AI cross-references vital trends to detect early occult shock and respiratory collapse.',
+    image: '/medical/doctor_examining_patient.jpg',
+    icon: Stethoscope,
+    badge: 'Physician Exam',
+  },
+  {
+    title: 'Intake Triage & Vitals Acquisition',
+    tag: 'First Clinical Contact',
+    desc: 'Emergency triage nurses measure physiological parameters and record nurse-typed chief complaints, feeding the 13-feature tabular & NLP pipeline.',
+    image: '/medical/nurse_patient_triage.jpg',
+    icon: HeartHandshake,
+    badge: 'Nurse Triage',
+  },
+  {
+    title: 'Multidisciplinary Trauma Resuscitation',
+    tag: 'Red-Flag Escalation',
+    desc: 'For ESI-1 and ESI-2 presentations, the AI activates immediate bay alerts and prepares the trauma team with ESI Handbook v4 action checklists.',
+    image: '/medical/trauma_resuscitation_team.jpg',
+    icon: Activity,
+    badge: 'Trauma Bay Care',
   },
 ];
 
@@ -205,7 +232,60 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 2: Behance Timeline / Stages of Work ───────────────── */}
+      {/* ── Section 2: Patient Care & Doctor Treatment Scenarios (NEW) ─ */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+              Clinical Workflow
+            </span>
+            <h2 className="text-2xl font-black text-slate-900">
+              Doctors & Nurses <span className="text-purple-700">Treating Emergency Patients</span>
+            </h2>
+          </div>
+          <span className="text-xs text-purple-800 font-bold bg-purple-50 px-3 py-1.5 rounded-full border border-purple-200/60">
+            Real-World ED Care
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {PATIENT_CARE_SCENARIOS.map((sc, idx) => (
+            <motion.div
+              key={sc.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.08 }}
+              className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-card-hover hover:border-purple-200 transition-all group"
+            >
+              <div className="relative h-48 w-full overflow-hidden">
+                <img
+                  src={sc.image}
+                  alt={sc.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <span className="absolute top-3 right-3 text-[10px] font-bold text-purple-950 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-purple-100">
+                  {sc.badge}
+                </span>
+              </div>
+
+              <div className="p-6 space-y-2.5">
+                <div className="flex items-center gap-2 text-purple-700">
+                  <sc.icon className="w-4 h-4" />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">{sc.tag}</span>
+                </div>
+                <h4 className="text-base font-black text-slate-900 group-hover:text-purple-700 transition-colors">
+                  {sc.title}
+                </h4>
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                  {sc.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Section 3: Behance Timeline / Stages of Work ───────────────── */}
       <section className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-200/80 shadow-card space-y-8">
         <div className="space-y-1">
           <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
@@ -370,7 +450,7 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 3: Clinical Environments & Equipment Showcase ────── */}
+      {/* ── Section 4: Clinical Environments & Equipment Showcase ────── */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -423,7 +503,7 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 4: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
+      {/* ── Section 5: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -476,7 +556,7 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 5: Core Module Cards ──────────────────────────────── */}
+      {/* ── Section 6: Core Module Cards ──────────────────────────────── */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

@@ -2334,5 +2334,672 @@
     "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Code Blue / 12-lead ECG STAT, cath lab activation, Evaluate for shock. AI confidence is moderate (84%). Clinical correlation advised.",
     "override": null,
     "type": "triage"
+  },
+  {
+    "event_id": "967f150b-2bab-41e7-89f4-e615a3529744",
+    "timestamp": "2026-08-28T14:11:07.436714+00:00",
+    "patient_id": "P-002",
+    "patient_name": "Jane Smith",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 0.65,
+      "mews": 1,
+      "map": 101.67
+    },
+    "ml_prediction": {
+      "esi_prediction": 3,
+      "probabilities": [
+        0.03205522894859314,
+        0.13975442945957184,
+        0.3681872487068176,
+        0.3072255253791809,
+        0.1527775526046753
+      ],
+      "confidence": 0.3681872487068176,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.58,
+      "urgency_level": "moderate",
+      "key_phrases": [
+        "tenderness"
+      ],
+      "semantic_flags": [],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 3,
+      "confidence": 0.8,
+      "probabilities": [
+        0.0278,
+        0.1258,
+        0.4913,
+        0.2417,
+        0.1133
+      ]
+    },
+    "safety_overrides": [],
+    "action_type": "RECOMMEND",
+    "confidence_flag": "medium",
+    "final_esi": 3,
+    "final_confidence": 0.8,
+    "routing": "Urgent Care",
+    "rationale": "This 45-year-old M presenting with \"Burning sensation post-meal, mild epigastric tenderness.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Vital signs within normal parameters. AI confidence is moderate (80%). Clinical correlation advised.",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "d7040a67-5ce8-4a03-9b4c-858f939d82d0",
+    "timestamp": "2026-08-28T14:11:23.517262+00:00",
+    "patient_id": "P-003",
+    "patient_name": "Alice Johnson",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "pediatric",
+    "derived_scores": {
+      "shock_index": 2.06,
+      "mews": 10,
+      "map": 60.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 1,
+      "probabilities": [
+        0.9991150498390198,
+        0.00031368809868581593,
+        0.00021557515719905496,
+        0.00013535247126128525,
+        0.00022030508262105286
+      ],
+      "confidence": 0.9991150498390198,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "seizure",
+        "lethargic"
+      ],
+      "semantic_flags": [
+        "status_epilepticus"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 1,
+      "confidence": 0.94,
+      "probabilities": [
+        0.9455,
+        0.0362,
+        0.0091,
+        0.0046,
+        0.0046
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=2.06",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R006",
+        "rule_name": "MEWS critical",
+        "triggered_by": "MEWS=10",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Physician review"
+      },
+      {
+        "rule_id": "R007",
+        "rule_name": "MAP dangerously low",
+        "triggered_by": "MAP=60.0",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Hemodynamic support"
+      },
+      {
+        "rule_id": "R009",
+        "rule_name": "Pediatric high fever",
+        "triggered_by": "Temp=39.2",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Fever control, infection workup"
+      },
+      {
+        "rule_id": "R012",
+        "rule_name": "Status Epilepticus / Active Seizure",
+        "triggered_by": "NLP: Active/Prolonged Seizure",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Benzodiazepines IV, protect airway STAT"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "high",
+    "final_esi": 1,
+    "final_confidence": 0.94,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 3-year-old F presenting with \"Mother reports seizure 10min ago, still lethargic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 2.06 (HR/SBP = 165/80), indicating hemodynamic instability. MAP 60 mmHg \u2014 below 65 mmHg threshold for adequate organ perfusion. MEWS score 10 (\u22655 indicates high risk of clinical deterioration). SpO2 94% \u2014 borderline oxygen saturation, monitor closely. Heart rate 165 bpm \u2014 significant tachycardia. Temperature 39.2\u00b0C \u2014 febrile, evaluate for infectious source. Status epilepticus / active prolonged seizure protocol activated. Per American Epilepsy Society (AES) guidelines: administer IV lorazepam 4mg (or IM midazolam 10mg) as first-line therapy within 5-10 minutes. Prepare second-line IV levetiracetam or fosphenytoin. Continuous EEG and airway team on standby. Safety system triggered 5 rule(s): Shock index critical, MEWS critical, MAP dangerously low, Pediatric high fever, Status Epilepticus / Active Seizure. Required actions: Hemodynamic support, Physician review, Benzodiazepines IV, protect airway STAT, Fever control, infection workup, Evaluate for shock. PEDIATRIC ALERT: Age-adjusted vital sign thresholds applied. Children compensate hemodynamically until late decompensation \u2014 normal blood pressure does NOT rule out shock in pediatric patients. Weight-based medication dosing required. AI confidence is high (94%).",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "evt-conf-1787926306",
+    "patient_id": "P-003",
+    "name": "Alice Johnson",
+    "nurse_id": "RN-Sarah",
+    "final_esi": 1,
+    "routing": "Resuscitation Bay",
+    "action_type": "CONFIRM_AND_ROUTE",
+    "timestamp": "2026-08-28T14:11:46.190750+00:00",
+    "type": "triage"
+  },
+  {
+    "event_id": "evt-conf-1787926311",
+    "patient_id": "P-003",
+    "name": "Alice Johnson",
+    "nurse_id": "RN-Sarah",
+    "final_esi": 1,
+    "routing": "Resuscitation Bay",
+    "action_type": "CONFIRM_AND_ROUTE",
+    "timestamp": "2026-08-28T14:11:51.621389+00:00",
+    "type": "triage"
+  },
+  {
+    "event_id": "df0d91dc-6803-4992-a46d-78f8f23ba3b8",
+    "timestamp": "2026-08-28T14:12:32.163248+00:00",
+    "patient_id": "P-003",
+    "patient_name": "Alice Johnson",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "pediatric",
+    "derived_scores": {
+      "shock_index": 2.06,
+      "mews": 10,
+      "map": 60.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 1,
+      "probabilities": [
+        0.9991150498390198,
+        0.00031368809868581593,
+        0.00021557515719905496,
+        0.00013535247126128525,
+        0.00022030508262105286
+      ],
+      "confidence": 0.9991150498390198,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "seizure",
+        "lethargic"
+      ],
+      "semantic_flags": [
+        "status_epilepticus"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 1,
+      "confidence": 0.94,
+      "probabilities": [
+        0.9455,
+        0.0362,
+        0.0091,
+        0.0046,
+        0.0046
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=2.06",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R006",
+        "rule_name": "MEWS critical",
+        "triggered_by": "MEWS=10",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Physician review"
+      },
+      {
+        "rule_id": "R007",
+        "rule_name": "MAP dangerously low",
+        "triggered_by": "MAP=60.0",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Hemodynamic support"
+      },
+      {
+        "rule_id": "R009",
+        "rule_name": "Pediatric high fever",
+        "triggered_by": "Temp=39.2",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Fever control, infection workup"
+      },
+      {
+        "rule_id": "R012",
+        "rule_name": "Status Epilepticus / Active Seizure",
+        "triggered_by": "NLP: Active/Prolonged Seizure",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Benzodiazepines IV, protect airway STAT"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "high",
+    "final_esi": 1,
+    "final_confidence": 0.94,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 3-year-old F presenting with \"Mother reports seizure 10min ago, still lethargic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 2.06 (HR/SBP = 165/80), indicating hemodynamic instability. MAP 60 mmHg \u2014 below 65 mmHg threshold for adequate organ perfusion. MEWS score 10 (\u22655 indicates high risk of clinical deterioration). SpO2 94% \u2014 borderline oxygen saturation, monitor closely. Heart rate 165 bpm \u2014 significant tachycardia. Temperature 39.2\u00b0C \u2014 febrile, evaluate for infectious source. Status epilepticus / active prolonged seizure protocol activated. Per American Epilepsy Society (AES) guidelines: administer IV lorazepam 4mg (or IM midazolam 10mg) as first-line therapy within 5-10 minutes. Prepare second-line IV levetiracetam or fosphenytoin. Continuous EEG and airway team on standby. Safety system triggered 5 rule(s): Shock index critical, MEWS critical, MAP dangerously low, Pediatric high fever, Status Epilepticus / Active Seizure. Required actions: Hemodynamic support, Physician review, Benzodiazepines IV, protect airway STAT, Fever control, infection workup, Evaluate for shock. PEDIATRIC ALERT: Age-adjusted vital sign thresholds applied. Children compensate hemodynamically until late decompensation \u2014 normal blood pressure does NOT rule out shock in pediatric patients. Weight-based medication dosing required. AI confidence is high (94%).",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "451cf997-dff6-4845-b3e4-0bbd283a6c02",
+    "timestamp": "2026-08-28T14:12:42.290763+00:00",
+    "patient_id": "P-003",
+    "patient_name": "Alice Johnson",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "pediatric",
+    "derived_scores": {
+      "shock_index": 2.06,
+      "mews": 10,
+      "map": 60.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 1,
+      "probabilities": [
+        0.9991150498390198,
+        0.00031368809868581593,
+        0.00021557515719905496,
+        0.00013535247126128525,
+        0.00022030508262105286
+      ],
+      "confidence": 0.9991150498390198,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "seizure",
+        "lethargic"
+      ],
+      "semantic_flags": [
+        "status_epilepticus"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 1,
+      "confidence": 0.94,
+      "probabilities": [
+        0.9455,
+        0.0362,
+        0.0091,
+        0.0046,
+        0.0046
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=2.06",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R006",
+        "rule_name": "MEWS critical",
+        "triggered_by": "MEWS=10",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Physician review"
+      },
+      {
+        "rule_id": "R007",
+        "rule_name": "MAP dangerously low",
+        "triggered_by": "MAP=60.0",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Hemodynamic support"
+      },
+      {
+        "rule_id": "R009",
+        "rule_name": "Pediatric high fever",
+        "triggered_by": "Temp=39.2",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Fever control, infection workup"
+      },
+      {
+        "rule_id": "R012",
+        "rule_name": "Status Epilepticus / Active Seizure",
+        "triggered_by": "NLP: Active/Prolonged Seizure",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Benzodiazepines IV, protect airway STAT"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "high",
+    "final_esi": 1,
+    "final_confidence": 0.94,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 3-year-old F presenting with \"Mother reports seizure 10min ago, still lethargic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 2.06 (HR/SBP = 165/80), indicating hemodynamic instability. MAP 60 mmHg \u2014 below 65 mmHg threshold for adequate organ perfusion. MEWS score 10 (\u22655 indicates high risk of clinical deterioration). SpO2 94% \u2014 borderline oxygen saturation, monitor closely. Heart rate 165 bpm \u2014 significant tachycardia. Temperature 39.2\u00b0C \u2014 febrile, evaluate for infectious source. Status epilepticus / active prolonged seizure protocol activated. Per American Epilepsy Society (AES) guidelines: administer IV lorazepam 4mg (or IM midazolam 10mg) as first-line therapy within 5-10 minutes. Prepare second-line IV levetiracetam or fosphenytoin. Continuous EEG and airway team on standby. Safety system triggered 5 rule(s): Shock index critical, MEWS critical, MAP dangerously low, Pediatric high fever, Status Epilepticus / Active Seizure. Required actions: Hemodynamic support, Physician review, Benzodiazepines IV, protect airway STAT, Fever control, infection workup, Evaluate for shock. PEDIATRIC ALERT: Age-adjusted vital sign thresholds applied. Children compensate hemodynamically until late decompensation \u2014 normal blood pressure does NOT rule out shock in pediatric patients. Weight-based medication dosing required. AI confidence is high (94%).",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "1b9290d4-5e06-4fec-bff6-533e61e37141",
+    "timestamp": "2026-08-28T14:12:52.031941+00:00",
+    "patient_id": "P-003",
+    "patient_name": "Alice Johnson",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "pediatric",
+    "derived_scores": {
+      "shock_index": 2.06,
+      "mews": 10,
+      "map": 60.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 1,
+      "probabilities": [
+        0.9991150498390198,
+        0.00031368809868581593,
+        0.00021557515719905496,
+        0.00013535247126128525,
+        0.00022030508262105286
+      ],
+      "confidence": 0.9991150498390198,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "seizure",
+        "lethargic"
+      ],
+      "semantic_flags": [
+        "status_epilepticus"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 1,
+      "confidence": 0.94,
+      "probabilities": [
+        0.9455,
+        0.0362,
+        0.0091,
+        0.0046,
+        0.0046
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=2.06",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R006",
+        "rule_name": "MEWS critical",
+        "triggered_by": "MEWS=10",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Physician review"
+      },
+      {
+        "rule_id": "R007",
+        "rule_name": "MAP dangerously low",
+        "triggered_by": "MAP=60.0",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Hemodynamic support"
+      },
+      {
+        "rule_id": "R009",
+        "rule_name": "Pediatric high fever",
+        "triggered_by": "Temp=39.2",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Fever control, infection workup"
+      },
+      {
+        "rule_id": "R012",
+        "rule_name": "Status Epilepticus / Active Seizure",
+        "triggered_by": "NLP: Active/Prolonged Seizure",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Benzodiazepines IV, protect airway STAT"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "high",
+    "final_esi": 1,
+    "final_confidence": 0.94,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 3-year-old F presenting with \"Mother reports seizure 10min ago, still lethargic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 2.06 (HR/SBP = 165/80), indicating hemodynamic instability. MAP 60 mmHg \u2014 below 65 mmHg threshold for adequate organ perfusion. MEWS score 10 (\u22655 indicates high risk of clinical deterioration). SpO2 94% \u2014 borderline oxygen saturation, monitor closely. Heart rate 165 bpm \u2014 significant tachycardia. Temperature 39.2\u00b0C \u2014 febrile, evaluate for infectious source. Status epilepticus / active prolonged seizure protocol activated. Per American Epilepsy Society (AES) guidelines: administer IV lorazepam 4mg (or IM midazolam 10mg) as first-line therapy within 5-10 minutes. Prepare second-line IV levetiracetam or fosphenytoin. Continuous EEG and airway team on standby. Safety system triggered 5 rule(s): Shock index critical, MEWS critical, MAP dangerously low, Pediatric high fever, Status Epilepticus / Active Seizure. Required actions: Hemodynamic support, Physician review, Benzodiazepines IV, protect airway STAT, Fever control, infection workup, Evaluate for shock. PEDIATRIC ALERT: Age-adjusted vital sign thresholds applied. Children compensate hemodynamically until late decompensation \u2014 normal blood pressure does NOT rule out shock in pediatric patients. Weight-based medication dosing required. AI confidence is high (94%).",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "evt-conf-1787926443",
+    "patient_id": "P-013",
+    "name": "Julia Martin",
+    "nurse_id": "RN-Sarah",
+    "final_esi": 1,
+    "routing": "Resuscitation Bay",
+    "action_type": "CONFIRM_AND_ROUTE",
+    "timestamp": "2026-08-28T14:14:03.237066+00:00",
+    "type": "triage"
+  },
+  {
+    "event_id": "8ebb84bd-2e84-4f5b-b5d6-5486ba129f52",
+    "timestamp": "2026-08-28T14:14:10.359294+00:00",
+    "patient_id": "P-012",
+    "patient_name": "Ian Clark",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 0.61,
+      "mews": 4,
+      "map": 63.33
+    },
+    "ml_prediction": {
+      "esi_prediction": 1,
+      "probabilities": [
+        0.9910291433334351,
+        0.00022128448472358286,
+        0.002398374956101179,
+        0.005690371617674828,
+        0.0006608423427678645
+      ],
+      "confidence": 0.9910291433334351,
+      "feature_importance": {
+        "age": 0.02901518903672695,
+        "sex": 0.0251027699559927,
+        "hr": 0.029992196708917618,
+        "sbp": 0.09314076602458954,
+        "dbp": 0.024991435930132866,
+        "spo2": 0.3331851065158844,
+        "rr": 0.030124055221676826,
+        "temp": 0.027697410434484482,
+        "pain": 0.023387273773550987,
+        "arrival_mode": 0.018541572615504265,
+        "shock_index": 0.28006890416145325,
+        "mews": 0.05467882379889488,
+        "map": 0.030074475333094597
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "unresponsive",
+        "pinpoint pupils",
+        "gcs"
+      ],
+      "semantic_flags": [
+        "overdose_toxic",
+        "coma_unresponsive"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 1,
+      "confidence": 0.94,
+      "probabilities": [
+        0.9411,
+        0.0361,
+        0.0103,
+        0.0076,
+        0.0049
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R002",
+        "rule_name": "Severe hypoxemia",
+        "triggered_by": "SpO2=87",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Oxygen therapy"
+      },
+      {
+        "rule_id": "R007",
+        "rule_name": "MAP dangerously low",
+        "triggered_by": "MAP=63.33",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Hemodynamic support"
+      },
+      {
+        "rule_id": "R011",
+        "rule_name": "Unresponsive / Severe Altered Consciousness",
+        "triggered_by": "NLP: GCS<=8 / Unresponsive",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Immediate resuscitation, airway protection STAT"
+      },
+      {
+        "rule_id": "R018",
+        "rule_name": "Toxic Ingestion / Overdose with Pinpoint Pupils",
+        "triggered_by": "NLP: Toxic ingestion / respiratory depression",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Naloxone / Poison Control / Continuous cardiac monitor"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "high",
+    "final_esi": 1,
+    "final_confidence": 0.94,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 19-year-old M presenting with \"Found unresponsive, empty pill bottles nearby, GCS 8, pinpoint pupils.\" meets ESI-1 criteria: Immediate life-saving intervention required. MAP 63 mmHg \u2014 below 65 mmHg threshold for adequate organ perfusion. SpO2 87% \u2014 significant hypoxemia requiring supplemental oxygen. Severe toxic ingestion / opioid or polypharmacy overdose with respiratory depression. Contact Poison Control (1-800-222-1222). Administer IV/IN Naloxone titrated to respiratory rate \u2265 12. Continuous pulse oximetry, capnography, and 12-lead ECG for QTc prolongation. Severe neurological depression / coma identified (GCS \u2264 8 or unresponsive). Per ATLS / Emergency Neurological Life Support (ENLS) guidelines: immediate airway protection via endotracheal intubation is indicated. Check fingerstick glucose immediately, assess pupillary reactivity, and obtain emergent non-contrast head CT. Safety system triggered 4 rule(s): Severe hypoxemia, MAP dangerously low, Unresponsive / Severe Altered Consciousness, Toxic Ingestion / Overdose with Pinpoint Pupils. Required actions: Hemodynamic support, Immediate resuscitation, airway protection STAT, Oxygen therapy, Naloxone / Poison Control / Continuous cardiac monitor. AI confidence is high (94%).",
+    "override": null,
+    "type": "triage"
   }
 ]
