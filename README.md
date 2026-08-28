@@ -11,9 +11,9 @@
 
 ## 📌 Executive Summary
 
-**PatientTriage.ai** is an end-to-end clinical decision support platform designed to assist emergency department clinicians in assigning Emergency Severity Index (ESI 1–5) triage levels rapidly, safely, and accurately.
+**PatientTriage.ai** is an end-to-end clinical decision support platform designed to assist emergency department clinicians in assigning Emergency Severity Index triage levels rapidly, safely, and accurately.
 
-### 🌟 Key Performance Highlights (1,200 Patient Cohort)
+### 🌟 Key Performance Highlights (1,200 Patient Data)
 - **5-Class AUROC**: `0.8993`
 - **Binary Critical AUROC (ESI 1-2 vs 3-5)**: `0.9884`
 - **ESI-1 Recall Rate**: `100.0%` (Zero missed critical life threats)
