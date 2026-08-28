@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import {
   Activity, Cpu, Monitor, Shield, BarChart3, ArrowRight,
   Sparkles, CheckCircle2, ChevronRight, Stethoscope, Clock, Zap, HeartPulse,
-  Award, Bed, Ambulance, Radio, ShieldCheck, Microscope, UserCheck, HeartHandshake
+  Award, Bed, Ambulance, Radio, ShieldCheck, Microscope, UserCheck, HeartHandshake,
+  Users, Check, Building2
 } from 'lucide-react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import GlassCard from '@/components/GlassCard';
@@ -108,9 +109,24 @@ const CLINICAL_ENVIRONMENTS = [
 
 export default function DashboardHome() {
   return (
-    <main className="flex-1 px-6 py-10 max-w-7xl mx-auto w-full space-y-16">
+    <main className="flex-1 px-6 py-10 max-w-7xl mx-auto w-full space-y-16 relative overflow-hidden">
+      {/* ── Ambient Medical Team Background Image with Soft Fade ───────── */}
+      <div
+        className="absolute top-0 right-0 w-full lg:w-3/5 h-[520px] pointer-events-none overflow-hidden z-0 opacity-[0.12] select-none transition-opacity duration-500"
+        style={{
+          maskImage: 'radial-gradient(ellipse at 80% 30%, black 20%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at 80% 30%, black 20%, transparent 75%)'
+        }}
+      >
+        <img
+          src="/medical/indian_doctors_uploaded.webp"
+          alt="Medical Doctors Background"
+          className="w-full h-full object-cover object-top filter contrast-105"
+        />
+      </div>
+
       {/* ── Section 1: Behance Main Business Objective ────────────────── */}
-      <section className="space-y-8 pt-4">
+      <section className="space-y-8 pt-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Title & Heading */}
           <div className="lg:col-span-7 space-y-4">
@@ -232,8 +248,8 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 2: Patient Care & Doctor Treatment Scenarios (NEW) ─ */}
-      <section className="space-y-6">
+      {/* ── Section 2: Patient Care & Doctor Treatment Scenarios ───────── */}
+      <section className="space-y-6 relative z-10">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
@@ -285,8 +301,50 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 3: Behance Timeline / Stages of Work ───────────────── */}
-      <section className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-200/80 shadow-card space-y-8">
+      {/* ── Section 3: Indian Clinical Cohort Panoramic Banner (NEW) ── */}
+      <section className="relative z-10 rounded-3xl overflow-hidden border border-slate-200/80 shadow-card bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-8 lg:p-10">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-800/60 border border-purple-400/30 text-purple-200 text-xs font-bold">
+              <Users className="w-3.5 h-3.5 text-purple-300" />
+              Indian Emergency Medicine Cohort Validation
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black text-white leading-snug">
+              Validated on <span className="text-amber-300">1,200 Indian Emergency Patients</span> by Leading Clinicians
+            </h3>
+            <p className="text-xs text-purple-200/90 leading-relaxed font-medium">
+              Calibrated for tertiary Indian medical centres (AIIMS, Apollo, Max Healthcare) featuring specialized tropical disease triggers (Dengue hemorrhagic shock, Snakebite neurotoxicity, Acute organophosphate poisoning) alongside standard ESI-1 through 5 presentations.
+            </p>
+            <div className="flex flex-wrap gap-4 pt-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-purple-100">
+                <Check className="w-4 h-4 text-emerald-400" /> 100% ESI-1 Sensitivity
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-purple-100">
+                <Check className="w-4 h-4 text-emerald-400" /> 18 Safety Red-Flags
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-purple-100">
+                <Check className="w-4 h-4 text-emerald-400" /> Zero Missed Life Threats
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 relative">
+            <div className="rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl relative group">
+              <img
+                src="/medical/indian_doctors_uploaded.webp"
+                alt="Indian Emergency Medical Team"
+                className="w-full h-56 object-cover object-top group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-4">
+                <span className="text-xs font-black text-white">Emergency Medical Faculty & Attending Team</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 4: Behance Timeline / Stages of Work ───────────────── */}
+      <section className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-200/80 shadow-card space-y-8 relative z-10">
         <div className="space-y-1">
           <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
             Stages of AI Architecture
@@ -450,8 +508,8 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 4: Clinical Environments & Equipment Showcase ────── */}
-      <section className="space-y-6">
+      {/* ── Section 5: Clinical Environments & Equipment Showcase ────── */}
+      <section className="space-y-6 relative z-10">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
@@ -503,8 +561,8 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 5: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
-      <section className="space-y-6">
+      {/* ── Section 6: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
+      <section className="space-y-6 relative z-10">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
@@ -556,8 +614,8 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 6: Core Module Cards ──────────────────────────────── */}
-      <section className="space-y-6">
+      {/* ── Section 7: Core Module Cards ──────────────────────────────── */}
+      <section className="space-y-6 relative z-10">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
