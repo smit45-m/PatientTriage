@@ -33,36 +33,36 @@ export default function ParticleBackground() {
 
     window.addEventListener('resize', handleResize);
 
-    const colors = ['#A100FF', '#7200b3', '#22d3ee', '#8b00db', '#ec4899'];
-    const particleCount = 55;
+    const colors = ['#7c3aed', '#6366f1', '#a855f7', '#4338ca', '#818cf8'];
+    const particleCount = 35;
     const particles: Particle[] = [];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: Math.random() * 2 + 0.8,
+        radius: Math.random() * 2 + 1,
         color: colors[Math.floor(Math.random() * colors.length)],
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        alpha: Math.random() * 0.4 + 0.1,
-        alphaSpeed: (Math.random() * 0.005 + 0.002) * (Math.random() > 0.5 ? 1 : -1),
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.25 + 0.08,
+        alphaSpeed: (Math.random() * 0.003 + 0.001) * (Math.random() > 0.5 ? 1 : -1),
       });
     }
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw subtle connecting lines between nearby particles
+      // Draw delicate connecting lines between nearby particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 130) {
+          if (dist < 140) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(161, 0, 255, ${0.08 * (1 - dist / 130)})`;
+            ctx.strokeStyle = `rgba(124, 58, 237, ${0.05 * (1 - dist / 140)})`;
             ctx.lineWidth = 0.8;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -77,7 +77,7 @@ export default function ParticleBackground() {
         p.y += p.vy;
         p.alpha += p.alphaSpeed;
 
-        if (p.alpha <= 0.08 || p.alpha >= 0.5) {
+        if (p.alpha <= 0.05 || p.alpha >= 0.3) {
           p.alphaSpeed = -p.alphaSpeed;
         }
 
@@ -90,11 +90,8 @@ export default function ParticleBackground() {
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p.color;
         ctx.fill();
         ctx.globalAlpha = 1.0;
-        ctx.shadowBlur = 0;
       });
 
       animationFrameId = requestAnimationFrame(render);
@@ -112,7 +109,7 @@ export default function ParticleBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.85 }}
+      style={{ opacity: 0.7 }}
     />
   );
 }

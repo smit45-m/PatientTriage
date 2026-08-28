@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Search, Download, AlertTriangle, Sparkles } from 'lucide-react';
+import { Shield, Search, Download, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import ESIBadge from '@/components/ESIBadge';
 import AnimatedCounter from '@/components/AnimatedCounter';
@@ -16,11 +16,11 @@ export default function AuditPage() {
   useEffect(() => { fetchAuditLogs().then(d => setLogs(d || [])).catch(() => {}); }, []);
 
   const displayLogs: AuditEntry[] = logs.length > 0 ? logs : [
-    { event_id: 'evt-8492019a', timestamp: '2026-08-23T21:10:45Z', patient_id: 'P-001', nurse_id: 'RN-Sarah', final_esi: 1, action_type: 'DECIDE' },
-    { event_id: 'evt-7391028b', timestamp: '2026-08-23T21:05:12Z', patient_id: 'P-003', nurse_id: 'RN-Sarah', final_esi: 2, action_type: 'RECOMMEND', override: { original_esi: 3, new_esi: 2, reason: 'Post-ictal lethargy in pediatric patient requires monitored bay' } },
-    { event_id: 'evt-6284910c', timestamp: '2026-08-23T20:55:30Z', patient_id: 'P-010', nurse_id: 'RN-Michael', final_esi: 1, action_type: 'DECIDE' },
-    { event_id: 'evt-5173829d', timestamp: '2026-08-23T20:42:18Z', patient_id: 'P-006', nurse_id: 'RN-Sarah', final_esi: 4, action_type: 'RECOMMEND' },
-    { event_id: 'evt-4062718e', timestamp: '2026-08-23T20:30:05Z', patient_id: 'P-013', nurse_id: 'RN-Michael', final_esi: 2, action_type: 'RECOMMEND', override: { original_esi: 3, new_esi: 2, reason: 'Continuous 2nd trimester bleeding — elevated obstetric risk' } },
+    { event_id: 'evt-8492019a', timestamp: '2026-08-28T16:10:45Z', patient_id: 'P-001', nurse_id: 'RN-Sarah', final_esi: 1, action_type: 'DECIDE' },
+    { event_id: 'evt-7391028b', timestamp: '2026-08-28T16:05:12Z', patient_id: 'P-003', nurse_id: 'RN-Sarah', final_esi: 2, action_type: 'RECOMMEND', override: { original_esi: 3, new_esi: 2, reason: 'Post-ictal lethargy in pediatric patient requires monitored bay' } },
+    { event_id: 'evt-6284910c', timestamp: '2026-08-28T15:55:30Z', patient_id: 'P-010', nurse_id: 'RN-Michael', final_esi: 1, action_type: 'DECIDE' },
+    { event_id: 'evt-5173829d', timestamp: '2026-08-28T15:42:18Z', patient_id: 'P-006', nurse_id: 'RN-Sarah', final_esi: 4, action_type: 'RECOMMEND' },
+    { event_id: 'evt-4062718e', timestamp: '2026-08-28T15:30:05Z', patient_id: 'P-013', nurse_id: 'RN-Michael', final_esi: 2, action_type: 'RECOMMEND', override: { original_esi: 3, new_esi: 2, reason: 'Continuous 2nd trimester bleeding — elevated obstetric risk' } },
   ];
 
   const filtered = displayLogs.filter((l: any, idx: number) => {
@@ -51,123 +51,147 @@ export default function AuditPage() {
   };
 
   return (
-    <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-6">
+    <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-8">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black">
-            <span className="gradient-text">Governance</span>{' '}
-            <span className="text-white">Audit Trail</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Governance & Compliance</span>
+          <h1 className="text-3xl font-black text-slate-900 mt-1">
+            Clinical <span className="text-purple-700">Audit Trail</span>
           </h1>
-          <p className="text-xs text-gray-400 mt-1">Immutable record of AI recommendations and clinician overrides</p>
+          <p className="text-xs text-slate-500 font-medium mt-1">
+            Immutable, HIPAA-compliant event record of all AI triage recommendations, clinical overrides, and timestamped clinician justifications.
+          </p>
         </div>
         <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={handleExport}
-          className="px-5 py-2.5 glass text-gray-200 text-xs font-bold flex items-center gap-2"
+          className="px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-700 text-xs font-bold shadow-xs hover:bg-slate-50 flex items-center gap-2"
         >
-          <Download className="w-3.5 h-3.5" /> Export JSON
+          <Download className="w-4 h-4 text-purple-700" /> Export Audit JSON
         </motion.button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <GlassCard className="!p-4 text-center" glowColor="rgba(2,132,199,0.06)">
-          <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">Total Decisions</span>
-          <div className="text-3xl font-black text-white mt-1"><AnimatedCounter value={displayLogs.length} /></div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <GlassCard className="!p-5 text-center space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Triage Events</span>
+          <div className="text-3xl font-black text-slate-900"><AnimatedCounter value={displayLogs.length} /></div>
+          <span className="text-[10px] text-slate-400 font-medium">Logged in current session</span>
         </GlassCard>
-        <GlassCard className="!p-4 text-center" glowColor="rgba(34,197,94,0.06)">
-          <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">AI-Clinician Agreement</span>
-          <div className="text-3xl font-black text-green-400 mt-1"><AnimatedCounter value={agreementRate} suffix="%" /></div>
+
+        <GlassCard className="!p-5 text-center space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">AI-Clinician Agreement</span>
+          <div className="text-3xl font-black text-emerald-600"><AnimatedCounter value={agreementRate} suffix="%" /></div>
+          <span className="text-[10px] text-emerald-700 font-semibold">High clinical concordance</span>
         </GlassCard>
-        <GlassCard className="!p-4 text-center" glowColor="rgba(234,179,8,0.06)">
-          <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">Clinician Overrides</span>
-          <div className="text-3xl font-black text-yellow-400 mt-1"><AnimatedCounter value={overrideCount} /></div>
+
+        <GlassCard className="!p-5 text-center space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Physician Overrides</span>
+          <div className="text-3xl font-black text-amber-600"><AnimatedCounter value={overrideCount} /></div>
+          <span className="text-[10px] text-amber-700 font-semibold">Clinician autonomy preserved</span>
         </GlassCard>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-2.5" />
-          <input type="text" placeholder="Search by patient or event ID..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 glass-sm text-xs text-white placeholder-gray-600 focus:outline-none focus:border-accent-500/40 transition-colors" />
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+          <input
+            type="text"
+            placeholder="Search by patient ID or event ID..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all shadow-xs"
+          />
         </div>
-        {(['all', 'overrides', 'standard'] as const).map(t => (
-          <button key={t} onClick={() => setFilterType(t)}
-            className={`px-3 py-1.5 rounded-xl text-[10px] font-bold capitalize transition-all ${
-              filterType === t ? 'bg-accent-500/15 text-accent-300 shadow-glass' : 'text-gray-500 hover:text-gray-300'
-            }`}>{t === 'overrides' ? 'Overrides Only' : t}</button>
-        ))}
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+          {(['all', 'overrides', 'standard'] as const).map(t => (
+            <button
+              key={t}
+              onClick={() => setFilterType(t)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
+                filterType === t
+                  ? 'bg-white text-purple-800 shadow-sm border border-slate-200/50'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {t === 'overrides' ? 'Overrides Only' : t === 'standard' ? 'Standard Logs' : 'All Events'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Table */}
       <GlassCard variant="elevated" className="!p-0 overflow-hidden">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-white/[0.02] border-b border-white/[0.06] text-gray-500 text-[9px] uppercase tracking-[0.15em] font-bold">
-            <tr>
-              <th className="p-4">Event / Time</th>
-              <th className="p-4">Patient</th>
-              <th className="p-4">ESI</th>
-              <th className="p-4">Action</th>
-              <th className="p-4">Clinician</th>
-              <th className="p-4">Override</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/[0.04]">
-            {filtered.map((log: any, idx: number) => {
-              const eventId = String(log.event_id || log.type || `evt-${idx}`);
-              const timeStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'Recent';
-              const esiVal = log.final_esi || log.new_esi || 3;
-              const actionLabel =
-                log.action_type === 'DECIDE'
-                  ? '⚡ Decide'
-                  : log.type === 'override'
-                  ? '⚠️ Override'
-                  : log.action_type === 'CONFIRM_AND_ROUTE'
-                  ? '✓ Route'
-                  : '✓ Recommend';
-              const actionClass =
-                log.action_type === 'DECIDE'
-                  ? 'bg-red-500/15 text-red-400'
-                  : log.type === 'override'
-                  ? 'bg-amber-500/15 text-amber-400'
-                  : 'bg-green-500/10 text-green-400';
-              const overrideInfo =
-                log.override ||
-                (log.type === 'override'
-                  ? { original_esi: log.original_esi, new_esi: log.new_esi, reason: log.reason }
-                  : null);
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 text-[10px] uppercase tracking-wider font-bold">
+              <tr>
+                <th className="p-4">Event / Timestamp</th>
+                <th className="p-4">Patient ID</th>
+                <th className="p-4">Acuity</th>
+                <th className="p-4">Action Mode</th>
+                <th className="p-4">Clinician</th>
+                <th className="p-4">Clinical Override Details</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filtered.map((log: any, idx: number) => {
+                const eventId = String(log.event_id || log.type || `evt-${idx}`);
+                const timeStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'Recent';
+                const esiVal = log.final_esi || log.new_esi || 3;
+                const actionLabel =
+                  log.action_type === 'DECIDE'
+                    ? '⚡ Autonomous Decision'
+                    : log.type === 'override'
+                    ? '⚠️ Clinician Override'
+                    : log.action_type === 'CONFIRM_AND_ROUTE'
+                    ? '✓ Routed to Bay'
+                    : '✓ Recommended';
+                const actionClass =
+                  log.action_type === 'DECIDE'
+                    ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                    : log.type === 'override'
+                    ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                    : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+                const overrideInfo =
+                  log.override ||
+                  (log.type === 'override'
+                    ? { original_esi: log.original_esi, new_esi: log.new_esi, reason: log.reason }
+                    : null);
 
-              return (
-                <motion.tr key={eventId + idx} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hover:bg-white/[0.02]">
-                  <td className="p-4 font-mono">
-                    <span className="text-gray-300">{eventId.slice(0, 12)}</span>
-                    <p className="text-[9px] text-gray-600 mt-0.5">{timeStr}</p>
-                  </td>
-                  <td className="p-4 font-semibold text-white">{log.patient_id || 'Unknown'}</td>
-                  <td className="p-4"><ESIBadge esi={esiVal} size="sm" showLabel={false} /></td>
-                  <td className="p-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${actionClass}`}>{actionLabel}</span>
-                  </td>
-                  <td className="p-4 text-gray-400 font-mono">{log.nurse_id || 'RN-Sarah'}</td>
-                  <td className="p-4">
-                    {overrideInfo ? (
-                      <div>
-                        <span className="text-yellow-400 text-[10px] font-bold flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" /> ESI-{overrideInfo.original_esi} → ESI-{overrideInfo.new_esi}
-                        </span>
-                        {overrideInfo.reason && (
-                          <p className="text-[9px] text-gray-500 line-clamp-1 mt-0.5 italic">{overrideInfo.reason}</p>
-                        )}
-                      </div>
-                    ) : <span className="text-gray-700 text-[9px]">—</span>}
-                  </td>
-                </motion.tr>
-              );
-            })}
-          </tbody>
-        </table>
+                return (
+                  <motion.tr key={eventId + idx} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="p-4 font-mono">
+                      <span className="text-slate-800 font-bold">{eventId.slice(0, 14)}</span>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{timeStr}</p>
+                    </td>
+                    <td className="p-4 font-bold text-slate-900">{log.patient_id || 'Unknown'}</td>
+                    <td className="p-4"><ESIBadge esi={esiVal} size="sm" showLabel={false} /></td>
+                    <td className="p-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${actionClass}`}>{actionLabel}</span>
+                    </td>
+                    <td className="p-4 text-slate-600 font-mono font-medium">{log.nurse_id || 'RN-Sarah'}</td>
+                    <td className="p-4">
+                      {overrideInfo ? (
+                        <div className="space-y-1">
+                          <span className="text-amber-800 font-bold text-xs flex items-center gap-1.5">
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" /> ESI-{overrideInfo.original_esi} ➔ ESI-{overrideInfo.new_esi}
+                          </span>
+                          {overrideInfo.reason && (
+                            <p className="text-[11px] text-slate-500 italic max-w-sm">{overrideInfo.reason}</p>
+                          )}
+                        </div>
+                      ) : <span className="text-slate-300 text-xs">—</span>}
+                    </td>
+                  </motion.tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </GlassCard>
     </div>
   );

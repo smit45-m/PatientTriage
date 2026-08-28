@@ -23,25 +23,24 @@ export default function GlassCard({
   ...props
 }: GlassCardProps) {
   const variants = {
-    default: 'glass',
-    elevated: 'glass-lg shadow-glass',
-    subtle: 'glass-sm',
+    default: 'bg-white border border-slate-200/80 rounded-2xl shadow-card',
+    elevated: 'bg-white border border-slate-200 rounded-3xl shadow-card',
+    subtle: 'bg-slate-50/80 border border-slate-200/60 rounded-2xl shadow-xs',
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.35, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={
         hoverEffect || onClick
-          ? { y: -3, boxShadow: glowColor || '0 8px 32px rgba(161,0,255,0.2)' }
+          ? { y: -2, boxShadow: '0 14px 30px -4px rgba(109, 40, 217, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04)' }
           : undefined
       }
       whileTap={onClick ? { scale: 0.98 } : undefined}
       onClick={onClick}
-      className={`${variants[variant]} ${hoverEffect || onClick ? 'cursor-pointer transition-all duration-300' : ''} p-5 ${className}`}
-      style={glowColor ? { boxShadow: `0 4px 20px ${glowColor}` } : undefined}
+      className={`${variants[variant]} ${hoverEffect || onClick ? 'cursor-pointer transition-all duration-200' : ''} p-5 ${className}`}
       {...props}
     >
       {children}

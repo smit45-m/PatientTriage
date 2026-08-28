@@ -22,63 +22,70 @@ export default function VitalCard({
 }: VitalCardProps) {
   const statusConfig = {
     normal: {
-      glow: 'rgba(34,197,94,0.15)',
-      border: 'border-green-500/20',
-      iconBg: 'bg-green-500/10',
-      iconColor: 'text-green-400',
-      valueColor: 'text-green-400',
+      bg: 'bg-white',
+      border: 'border-slate-200/80',
+      iconBg: 'bg-emerald-50 border border-emerald-200/60',
+      iconColor: 'text-emerald-700',
+      valueColor: 'text-slate-900',
+      tagBg: 'bg-emerald-50 text-emerald-700',
+      label: 'Normal',
     },
     warning: {
-      glow: 'rgba(234,179,8,0.15)',
-      border: 'border-yellow-500/20',
-      iconBg: 'bg-yellow-500/10',
-      iconColor: 'text-yellow-400',
-      valueColor: 'text-yellow-400',
+      bg: 'bg-amber-50/40',
+      border: 'border-amber-200',
+      iconBg: 'bg-amber-100/70 border border-amber-300/60',
+      iconColor: 'text-amber-800',
+      valueColor: 'text-amber-950',
+      tagBg: 'bg-amber-100 text-amber-800',
+      label: 'Elevated',
     },
     critical: {
-      glow: 'rgba(239,68,68,0.2)',
-      border: 'border-red-500/30',
-      iconBg: 'bg-red-500/10',
-      iconColor: 'text-red-400',
-      valueColor: 'text-red-400',
+      bg: 'bg-rose-50/50',
+      border: 'border-rose-300',
+      iconBg: 'bg-rose-100 border border-rose-300/80',
+      iconColor: 'text-rose-700',
+      valueColor: 'text-rose-950',
+      tagBg: 'bg-rose-100 text-rose-800 font-bold',
+      label: 'Critical Alert',
     },
   }[status];
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`glass-sm p-3 border ${statusConfig.border}`}
-      style={{ boxShadow: `0 0 20px ${statusConfig.glow}` }}
+      className={`rounded-2xl p-4 border ${statusConfig.bg} ${statusConfig.border} shadow-card transition-all duration-200 hover:shadow-md`}
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">{name}</span>
-        <div className={`p-1.5 rounded-lg ${statusConfig.iconBg}`}>
-          <Icon className={`w-3 h-3 ${statusConfig.iconColor}`} />
+        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{name}</span>
+        <div className={`p-2 rounded-xl ${statusConfig.iconBg}`}>
+          <Icon className={`w-3.5 h-3.5 ${statusConfig.iconColor}`} />
         </div>
       </div>
 
-      <div className="flex items-baseline gap-1">
+      <div className="flex items-baseline gap-1.5 mt-1">
         {value === null || value === undefined ? (
-          <span className="text-lg font-bold text-gray-500">N/A</span>
+          <span className="text-2xl font-black text-slate-400">N/A</span>
         ) : typeof value === 'number' ? (
           <AnimatedCounter
             value={value}
             decimals={value % 1 !== 0 ? 1 : 0}
-            className={`text-xl font-black ${statusConfig.valueColor}`}
+            className={`text-2xl font-black ${statusConfig.valueColor} tracking-tight`}
           />
         ) : (
-          <span className={`text-xl font-black ${statusConfig.valueColor}`}>{value}</span>
+          <span className={`text-2xl font-black ${statusConfig.valueColor} tracking-tight`}>{value}</span>
         )}
-        <span className="text-[10px] text-gray-600">{unit}</span>
+        <span className="text-xs font-semibold text-slate-500">{unit}</span>
       </div>
 
-      {status === 'critical' && (
-        <div className="mt-1 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-[9px] text-red-400 font-medium">Alert</span>
-        </div>
-      )}
+      <div className="mt-2.5 flex items-center justify-between">
+        <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${statusConfig.tagBg}`}>
+          {statusConfig.label}
+        </span>
+        {thresholdText && (
+          <span className="text-[10px] text-slate-400 font-medium">{thresholdText}</span>
+        )}
+      </div>
     </motion.div>
   );
 }

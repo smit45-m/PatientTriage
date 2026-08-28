@@ -38,120 +38,149 @@ export default function MonitorPage() {
   ];
 
   return (
-    <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-6">
+    <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-8">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black">
-            <span className="gradient-text">Waiting Room</span>{' '}
-            <span className="text-white">Monitor</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Emergency Department Oversight</span>
+          <h1 className="text-3xl font-black text-slate-900 mt-1">
+            Waiting Room <span className="text-purple-700">Monitor</span>
           </h1>
-          <p className="text-xs text-gray-400 mt-1">Real-time patient queue with ESI-stratified wait-time thresholds</p>
+          <p className="text-xs text-slate-500 font-medium mt-1">
+            Real-time patient queue with dynamic ESI wait-time threshold tracking and automated deterioration alerts.
+          </p>
         </div>
 
         <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={handleToggleSurge}
-          className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+          className={`px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all shadow-xs ${
             surge.is_surge
-              ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-esi-1'
-              : 'glass text-gray-300 hover:text-white'
+              ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200'
+              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
-          <Flame className="w-4 h-4" />
-          {surge.is_surge ? '⚠ Surge Mode Active' : 'Simulate Surge Mode'}
+          <Flame className={`w-4 h-4 ${surge.is_surge ? 'text-white' : 'text-amber-500'}`} />
+          {surge.is_surge ? '⚠ Mass Surge Protocol Active' : 'Simulate Mass Casualty Surge'}
         </motion.button>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <GlassCard className="!p-4" glowColor="rgba(161,0,255,0.08)">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">Queue Size</span>
-            <Users className="w-4 h-4 text-accent-400" />
+        <GlassCard className="!p-5 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Waiting</span>
+            <div className="p-2 rounded-xl bg-purple-50 text-purple-700">
+              <Users className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-white"><AnimatedCounter value={displayQueue.length} /></div>
+          <div className="text-3xl font-black text-slate-900"><AnimatedCounter value={displayQueue.length} /></div>
+          <span className="text-[10px] text-slate-400 font-medium">Patients enqueued</span>
         </GlassCard>
-        <GlassCard className="!p-4" glowColor="rgba(239,68,68,0.08)">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">High Acuity (ESI 1-2)</span>
-            <AlertTriangle className="w-4 h-4 text-red-400" />
+
+        <GlassCard className="!p-5 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">High Acuity (ESI 1-2)</span>
+            <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-red-400"><AnimatedCounter value={displayQueue.filter(p => p.esi_level <= 2).length} /></div>
+          <div className="text-3xl font-black text-rose-600">
+            <AnimatedCounter value={displayQueue.filter(p => p.esi_level <= 2).length} />
+          </div>
+          <span className="text-[10px] text-rose-500 font-bold">Immediate attention required</span>
         </GlassCard>
-        <GlassCard className="!p-4" glowColor="rgba(234,179,8,0.08)">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">Threshold Breaches</span>
-            <ShieldAlert className="w-4 h-4 text-yellow-400" />
+
+        <GlassCard className="!p-5 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Threshold Breaches</span>
+            <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
+              <ShieldAlert className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-yellow-400"><AnimatedCounter value={displayQueue.filter(p => p.wait_minutes > p.threshold_minutes).length} /></div>
+          <div className="text-3xl font-black text-amber-600">
+            <AnimatedCounter value={displayQueue.filter(p => p.wait_minutes > p.threshold_minutes).length} />
+          </div>
+          <span className="text-[10px] text-amber-700 font-semibold">Exceeded safe wait limit</span>
         </GlassCard>
-        <GlassCard className="!p-4" glowColor="rgba(6,182,212,0.08)">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-gray-500 font-bold">Avg Wait Time</span>
-            <Clock className="w-4 h-4 text-cyan-400" />
+
+        <GlassCard className="!p-5 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Avg Wait Time</span>
+            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+              <Clock className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-cyan-400"><AnimatedCounter value={Math.round(displayQueue.reduce((a, p) => a + p.wait_minutes, 0) / (displayQueue.length || 1))} suffix="m" /></div>
+          <div className="text-3xl font-black text-indigo-900">
+            <AnimatedCounter value={Math.round(displayQueue.reduce((a, p) => a + p.wait_minutes, 0) / (displayQueue.length || 1))} suffix="m" />
+          </div>
+          <span className="text-[10px] text-slate-400 font-medium">Department throughput</span>
         </GlassCard>
       </div>
 
       {/* Patient Queue */}
-      <GlassCard variant="elevated" className="space-y-3">
-        <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-          <h3 className="text-sm font-bold text-white">Active Queue</h3>
-          <span className="text-[9px] text-gray-600 font-mono">Thresholds per ESI v4 guidelines</span>
+      <GlassCard variant="elevated" className="!p-6 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <h3 className="text-base font-black text-slate-900">Live Waiting Queue</h3>
+          <span className="text-[10px] text-slate-400 font-medium">Wait thresholds grounded in ESI Handbook v4 guidelines</span>
         </div>
 
-        {displayQueue.map((patient, i) => {
-          const breached = patient.wait_minutes > patient.threshold_minutes;
-          const pct = Math.min((patient.wait_minutes / patient.threshold_minutes) * 100, 100);
+        <div className="space-y-2.5">
+          {displayQueue.map((patient, i) => {
+            const breached = patient.wait_minutes > patient.threshold_minutes;
+            const pct = Math.min((patient.wait_minutes / patient.threshold_minutes) * 100, 100);
 
-          return (
-            <motion.div
-              key={patient.patient_id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className={`p-4 rounded-xl border transition-all ${
-                breached
-                  ? 'bg-red-500/5 border-red-500/20 shadow-esi-1'
-                  : 'glass-sm'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <ESIBadge esi={patient.esi_level} size="sm" showLabel={false} pulse={breached} />
-                  <span className="text-sm font-bold text-white">{patient.name}</span>
-                  <span className="text-[10px] font-mono text-gray-600">{patient.patient_id}</span>
-                </div>
-                <div className="flex items-center gap-4 text-[11px] font-mono">
-                  <span className={`font-bold ${breached ? 'text-red-400' : 'text-gray-400'}`}>
-                    {patient.wait_minutes}m
-                  </span>
-                  <span className="text-gray-700">/</span>
-                  <span className="text-gray-500">{patient.threshold_minutes}m limit</span>
-                  {breached && (
-                    <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 text-[9px] font-black animate-pulse">
-                      BREACHED
+            return (
+              <motion.div
+                key={patient.patient_id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className={`p-4 rounded-2xl border transition-all ${
+                  breached
+                    ? 'bg-rose-50/70 border-rose-300 shadow-sm'
+                    : 'bg-slate-50/60 border-slate-200/80 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <ESIBadge esi={patient.esi_level} size="sm" showLabel={false} pulse={breached} />
+                    <span className="text-sm font-bold text-slate-900">{patient.name}</span>
+                    <span className="text-xs font-mono text-slate-400">{patient.patient_id}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs font-medium">
+                    <span className={`font-mono font-bold ${breached ? 'text-rose-700 font-black' : 'text-slate-700'}`}>
+                      {patient.wait_minutes} min
                     </span>
-                  )}
+                    <span className="text-slate-300">/</span>
+                    <span className="text-slate-500 font-mono">{patient.threshold_minutes}m target</span>
+                    {breached && (
+                      <span className="px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider animate-pulse">
+                        Wait Breached
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="w-full h-1.5 bg-white/[0.03] rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  className={`h-full rounded-full ${
-                    breached ? 'bg-gradient-to-r from-red-500 to-red-400' : pct > 70 ? 'bg-gradient-to-r from-yellow-500 to-orange-400' : 'bg-gradient-to-r from-green-500 to-emerald-400'
-                  }`}
-                  style={{ boxShadow: breached ? '0 0 10px rgba(239,68,68,0.4)' : 'none' }}
-                />
-              </div>
-            </motion.div>
-          );
-        })}
+                <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    className={`h-full rounded-full ${
+                      breached
+                        ? 'bg-rose-600'
+                        : pct > 70
+                        ? 'bg-amber-500'
+                        : 'bg-emerald-500'
+                    }`}
+                  />
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </GlassCard>
     </div>
   );

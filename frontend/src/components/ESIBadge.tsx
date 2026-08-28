@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { ESI_COLORS, ESI_LABELS, ESI_BG_COLORS } from '@/lib/constants';
+import { ESI_COLORS, ESI_LABELS } from '@/lib/constants';
 
 interface ESIBadgeProps {
   esi: number;
@@ -10,6 +10,14 @@ interface ESIBadgeProps {
   className?: string;
 }
 
+const ESI_LIGHT_STYLES: Record<number, { bg: string; text: string; border: string; dot: string }> = {
+  1: { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', dot: 'bg-rose-600' },
+  2: { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', dot: 'bg-orange-600' },
+  3: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', dot: 'bg-amber-600' },
+  4: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-600' },
+  5: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-600' },
+};
+
 export default function ESIBadge({
   esi,
   size = 'md',
@@ -17,35 +25,27 @@ export default function ESIBadge({
   pulse = false,
   className = '',
 }: ESIBadgeProps) {
-  const color = ESI_COLORS[esi] || '#3b82f6';
+  const styles = ESI_LIGHT_STYLES[esi] || ESI_LIGHT_STYLES[3];
   const label = ESI_LABELS[esi] || `Level ${esi}`;
-  const bgColor = ESI_BG_COLORS[esi] || 'rgba(59,130,246,0.15)';
 
   const sizeStyles = {
-    sm: 'px-2 py-0.5 text-[10px] gap-1.5',
-    md: 'px-3 py-1 text-xs gap-2',
-    lg: 'px-4 py-1.5 text-sm gap-2.5',
+    sm: 'px-2.5 py-0.5 text-[10px] gap-1.5 font-bold',
+    md: 'px-3 py-1 text-xs gap-2 font-bold',
+    lg: 'px-4 py-1.5 text-sm gap-2.5 font-extrabold',
   }[size];
 
   return (
     <motion.span
-      initial={{ scale: 0.9, opacity: 0 }}
+      initial={{ scale: 0.92, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className={`inline-flex items-center rounded-full font-bold tracking-wide ${sizeStyles} ${className}`}
-      style={{
-        backgroundColor: bgColor,
-        color: color,
-        border: `1px solid ${color}30`,
-        boxShadow: `0 0 12px ${color}20`,
-      }}
+      className={`inline-flex items-center rounded-full border ${styles.bg} ${styles.text} ${styles.border} ${sizeStyles} ${className} shadow-xs`}
     >
       <span
-        className={`w-2 h-2 rounded-full ${pulse ? 'animate-pulse' : ''}`}
-        style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}60` }}
+        className={`w-2 h-2 rounded-full ${styles.dot} ${pulse ? 'animate-ping' : ''}`}
       />
-      ESI-{esi}
+      <span>ESI-{esi}</span>
       {showLabel && (
-        <span className="text-gray-400 font-normal border-l border-white/10 pl-2 ml-0.5">
+        <span className="font-medium text-slate-500 border-l border-slate-300/80 pl-2 ml-0.5">
           {label}
         </span>
       )}

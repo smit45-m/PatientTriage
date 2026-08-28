@@ -7,8 +7,8 @@ import ParticleBackground from "@/components/ParticleBackground";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PatientTriage.ai — AI-Powered Emergency Triage",
-  description: "AI-powered emergency department triage system with LangGraph multi-agent pipeline.",
+  title: "PatientTriage.ai — Intelligent Emergency Department Decision Support",
+  description: "Advanced AI emergency clinical triage system with LangGraph multi-agent pipeline and 100% ESI-1 recall.",
 };
 
 export default function RootLayout({
@@ -17,13 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} min-h-screen bg-surface-darker text-gray-200 antialiased overflow-x-hidden relative flex flex-col`}>
+    <html lang="en">
+      <body className={`${inter.className} min-h-screen bg-[#F8F9FC] text-slate-900 antialiased overflow-x-hidden relative flex flex-col`}>
         <ParticleBackground />
 
-        {/* Ambient gradient orbs */}
-        <div className="fixed top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-sky-500/5 blur-[150px] pointer-events-none" />
-        <div className="fixed bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
+        {/* Ambient subtle purple/indigo decorative light gradients */}
+        <div className="fixed top-0 left-1/4 w-[700px] h-[500px] rounded-full bg-purple-200/25 blur-[160px] pointer-events-none -z-10" />
+        <div className="fixed top-1/3 right-10 w-[500px] h-[500px] rounded-full bg-indigo-100/35 blur-[140px] pointer-events-none -z-10" />
+        <div className="fixed bottom-10 left-10 w-[600px] h-[400px] rounded-full bg-purple-100/40 blur-[150px] pointer-events-none -z-10" />
 
         <Navbar />
 

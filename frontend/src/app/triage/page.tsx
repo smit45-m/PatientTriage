@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Users, Loader2 } from 'lucide-react';
+import { Activity, Loader2, Users } from 'lucide-react';
 import PatientSidebar from '@/components/PatientSidebar';
 import TriageCard from '@/components/TriageCard';
 import { Patient } from '@/lib/types';
@@ -24,36 +24,36 @@ export default function TriagePage() {
   const selectedPatient = patients.find((p) => p.patient_id === selectedId);
 
   return (
-    <div className="flex-1 flex flex-col px-6 py-4 max-w-7xl mx-auto w-full h-[calc(100vh-80px)] overflow-hidden">
-      {/* Top breadcrumb & stats header */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/5 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-accent-500/15 text-accent-300">
-            <Activity className="w-4 h-4" />
+    <div className="flex-1 flex flex-col px-6 py-5 max-w-7xl mx-auto w-full h-[calc(100vh-80px)] overflow-hidden">
+      {/* Top Header */}
+      <div className="flex items-center justify-between pb-3.5 border-b border-slate-200/80 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-2xl bg-purple-100 border border-purple-200 text-purple-800">
+            <Activity className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-white tracking-tight">
-              AI Triage Queue & Clinical Cockpit
+            <h1 className="text-lg font-black text-slate-900 tracking-tight">
+              AI Triage Queue & Clinical Decision Cockpit
             </h1>
-            <p className="text-[11px] text-gray-400 -mt-0.5">
-              Select a patient from the queue to run the 5-stage multimodal AI triage pipeline
+            <p className="text-xs text-slate-500 font-medium -mt-0.5">
+              Select an emergency patient from the active queue to run the 5-stage multimodal triage pipeline.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-xs">
-          <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-gray-300">
-            Total Patients: <strong className="text-white">{patients.length}</strong>
+        <div className="flex items-center gap-2.5 text-xs">
+          <span className="px-3.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-xs font-semibold text-slate-700">
+            Active Patients: <strong className="text-purple-800">{patients.length}</strong>
           </span>
         </div>
       </div>
 
-      {/* Main 2-column workspace */}
+      {/* Main 2-Column Workspace */}
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 text-accent-400 animate-spin" />
-            <span className="text-xs font-mono text-gray-400">Loading Clinical Cohort...</span>
+          <div className="flex flex-col items-center gap-3 bg-white p-8 rounded-3xl border border-slate-200 shadow-card">
+            <Loader2 className="w-8 h-8 text-purple-700 animate-spin" />
+            <span className="text-xs font-bold text-slate-600">Loading Clinical Cohort...</span>
           </div>
         </div>
       ) : (
@@ -72,8 +72,8 @@ export default function TriagePage() {
             {selectedPatient ? (
               <TriageCard patient={selectedPatient} />
             ) : (
-              <div className="h-full flex items-center justify-center glass text-gray-500 text-sm">
-                Select a patient from the left queue to begin AI triage.
+              <div className="h-full flex items-center justify-center bg-white rounded-3xl border border-slate-200 shadow-card text-slate-400 text-sm font-medium">
+                Select a patient from the active queue on the left to begin AI triage.
               </div>
             )}
           </div>

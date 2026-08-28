@@ -9,39 +9,85 @@ import GlassCard from '@/components/GlassCard';
 
 const AGENT_SPECS = [
   {
-    id: 'intake', name: 'Intake & Clinical Scoring', icon: ClipboardList, color: '#3b82f6',
+    step: '01',
+    id: 'intake', name: 'Intake & Clinical Scoring', icon: ClipboardList, color: '#6d28d9',
     summary: 'Validates vital signs against age-stratified thresholds (pediatric / adult / geriatric) and calculates derived physiological scores.',
     inputs: ['Heart Rate, Blood Pressure, SpO2, Respiratory Rate, Temperature, Pain Scale', 'Patient demographics (age, sex, arrival mode)'],
     outputs: ['Shock Index (HR/SBP)', 'Modified Early Warning Score (MEWS)', 'Mean Arterial Pressure (MAP)', 'Vital sign anomaly flags per age group'],
-    code: `def intake_agent(state):\n  vitals = state["patient"]["vitals"]\n  thresholds = get_thresholds(state["patient"]["age"])\n  shock_index = vitals["hr"] / vitals["sbp"]\n  mews = calculate_mews(vitals, thresholds)\n  return {"derived_scores": {"shock_index": shock_index, "mews": mews}}`,
+    code: `def intake_agent(state: TriageState) -> dict:
+    patient = state["patient"]
+    vitals = patient["vitals"]
+    thresholds = get_thresholds(patient["age"])
+    shock_index = vitals["hr"] / max(vitals["sbp"], 1)
+    mews = calculate_mews(vitals, thresholds)
+    return {
+        "derived_scores": {"shock_index": shock_index, "mews": mews},
+        "vital_flags": assess_vital_flags(vitals, thresholds)
+    }`,
   },
   {
-    id: 'ml_nlp', name: 'ML & NLP Prediction Fusion', icon: Brain, color: '#a855f7',
+    step: '02',
+    id: 'ml_nlp', name: 'ML & NLP Prediction Fusion', icon: Brain, color: '#7c3aed',
     summary: 'Combines tabular ML (XGBoost on 13 features) with 5-tier NLP text analysis via weighted late fusion for ESI prediction.',
     inputs: ['13 clinical features (vitals + derived scores)', 'Free-text chief complaint', 'Fusion weights: ML=0.65, NLP=0.35'],
     outputs: ['5-class ESI probability distribution', 'NLP urgency classification with keyword matching', 'Entropy-based confidence score with agreement bonus'],
-    code: `def ml_agent(state):\n  ml_probs = xgb_model.predict_proba(features)\n  nlp_probs = nlp_classify(complaint)\n  fused = 0.65 * ml_probs + 0.35 * nlp_probs\n  confidence = _calculate_confidence(fused, ml_probs, nlp_probs)\n  return {"fused_prediction": fused, "confidence": confidence}`,
+    code: `def ml_agent(state: TriageState) -> dict:
+    features = build_feature_vector(state)
+    ml_probs = xgb_model.predict_proba(features)
+    nlp_result = nlp_extractor.extract(state["patient"]["chief_complaint"])
+    fused_probs = 0.65 * ml_probs + 0.35 * nlp_result["probabilities"]
+    confidence = calculate_calibrated_confidence(fused_probs, ml_probs)
+    return {"ml_score": ml_probs, "nlp_extraction": nlp_result, "fused_prediction": fused_probs}`,
   },
   {
-    id: 'safety', name: 'Clinical Safety Governance', icon: ShieldAlert, color: '#ef4444',
+    step: '03',
+    id: 'safety', name: 'Clinical Safety Governance', icon: ShieldAlert, color: '#dc2626',
     summary: 'Enforces 18 hard-coded safety rules with asymmetric loss (20x under-triage penalty) and confidence-based action governance.',
     inputs: ['Fused prediction probabilities', 'Active vital sign flags (tachycardia, hypotension, etc.)', 'NLP semantic alerts (stroke, sepsis, cardiac arrest)'],
     outputs: ['Safety rule overrides (automatic ESI-1 for life threats)', 'Adjusted prediction with asymmetric bias', 'Action type: DECIDE / ESCALATE / RECOMMEND'],
-    code: `def safety_agent(state):\n  if any(critical_flags):\n    override_to_esi1()\n  if confidence < 0.70:\n    action = "ESCALATE"  # Require senior review\n  elif esi <= 2:\n    action = "DECIDE"    # Autonomous escalation\n  return {"action_type": action, "overrides": rules_triggered}`,
+    code: `def safety_agent(state: TriageState) -> dict:
+    overrides = safety_engine.evaluate(
+        vitals=state["patient"]["vitals"],
+        derived=state["derived_scores"],
+        nlp_flags=state["nlp_extraction"]["semantic_flags"]
+    )
+    if overrides:
+        return {"action_type": "DECIDE", "final_esi": min(o["override_esi"] for o in overrides)}
+    adjusted = asymmetric_adjuster.apply(state["fused_prediction"])
+    return {"action_type": "RECOMMEND", "safety_overrides": overrides, "adjusted": adjusted}`,
   },
   {
-    id: 'rag', name: 'RAG Clinical Explainer', icon: BookOpen, color: '#06b6d4',
+    step: '04',
+    id: 'rag', name: 'RAG Clinical Explainer', icon: BookOpen, color: '#4f46e5',
     summary: 'Generates clinical rationale grounded in ESI Handbook v4, AHA, ASA, and Surviving Sepsis Campaign protocols.',
     inputs: ['Assigned ESI level and action type', 'Active protocols and safety overrides', 'Calculated vital narratives and severity markers'],
     outputs: ['Plain-English clinical rationale', 'Protocol-specific action checklist', 'Pediatric/geriatric special considerations'],
-    code: `def rag_agent(state):\n  context = retrieve_protocols(esi_level, overrides)\n  rationale = generate_explanation(\n    esi=state["final_esi"],\n    protocols=context,\n    vitals=state["vital_narratives"]\n  )\n  return {"rag_rationale": rationale, "recommendations": actions}`,
+    code: `def rag_agent(state: TriageState) -> dict:
+    guidelines = retrieve_esi_guidelines(state["final_esi"])
+    rationale = build_clinical_rationale(
+        esi=state["final_esi"],
+        patient=state["patient"],
+        scores=state["derived_scores"],
+        rules=state.get("safety_overrides", [])
+    )
+    return {"rag_rationale": rationale, "retrieved_guidelines": guidelines}`,
   },
   {
-    id: 'cockpit', name: 'Decision Cockpit & Audit', icon: MonitorCheck, color: '#22c55e',
+    step: '05',
+    id: 'cockpit', name: 'Decision Cockpit & Audit', icon: MonitorCheck, color: '#059669',
     summary: 'Determines hospital routing, computes feature importance via SHAP, and writes immutable audit records.',
     inputs: ['Final ESI assignment', 'ML feature importance matrix', 'Clinician identification and session metadata'],
     outputs: ['Target routing (Resuscitation Bay → Waiting Room)', 'Top-5 SHAP feature attributions', 'Timestamped immutable audit log entry'],
-    code: `def cockpit_agent(state):\n  routing = ROUTING_MAP[state["final_esi"]]\n  shap_values = explainer.shap_values(features)\n  audit_entry = create_audit_log(state, nurse_id)\n  return {"routing": routing, "audit": audit_entry}`,
+    code: `def cockpit_agent(state: TriageState) -> dict:
+    routing = ROUTING_MAP.get(state["final_esi"], "Waiting Room")
+    audit_entry = {
+        "event_id": str(uuid.uuid4()),
+        "timestamp": datetime.utcnow().isoformat(),
+        "patient_id": state["patient"]["patient_id"],
+        "final_esi": state["final_esi"],
+        "routing": routing
+    }
+    return {"routing": routing, "audit_entry": audit_entry}`,
   },
 ];
 
@@ -51,26 +97,26 @@ export default function PipelinePage() {
   const Icon = active.icon;
 
   return (
-    <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-6">
+    <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-8">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black">
-            <span className="gradient-text">LangGraph Multi-Agent</span>{' '}
-            <span className="text-white">Pipeline</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Architecture Inspector</span>
+          <h1 className="text-3xl font-black text-slate-900 mt-1">
+            LangGraph <span className="text-purple-700">Multi-Agent</span> Pipeline
           </h1>
-          <p className="text-xs text-gray-400 mt-1">
-            StateGraph architecture with 5 compiled agent nodes processing patient data sequentially
+          <p className="text-xs text-slate-500 font-medium mt-1">
+            StateGraph architecture with 5 compiled agent nodes processing patient data sequentially with deterministic safety checks.
           </p>
         </div>
-        <div className="flex items-center gap-2 glass-sm px-3 py-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-          <Cpu className="w-3.5 h-3.5 text-accent-400" />
+        <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 px-3.5 py-2 rounded-2xl text-xs text-purple-900 font-mono font-bold shadow-xs">
+          <Cpu className="w-4 h-4 text-purple-700" />
           triage_graph.compile()
         </div>
       </div>
 
-      {/* Stage Selector */}
-      <div className="grid grid-cols-5 gap-2">
+      {/* Stage Selector (01 to 05) */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {AGENT_SPECS.map((node, i) => {
           const NodeIcon = node.icon;
           const isActive = activeIdx === i;
@@ -78,22 +124,24 @@ export default function PipelinePage() {
             <button
               key={node.id}
               onClick={() => setActiveIdx(i)}
-              className={`glass-sm p-3 text-left transition-all border ${
+              className={`p-4 rounded-2xl text-left transition-all duration-200 border ${
                 isActive
-                  ? 'border-accent-500/40 shadow-glass bg-accent-500/5'
-                  : 'hover:bg-white/[0.02]'
+                  ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm ring-2 ring-purple-500/20'
+                  : 'bg-white border-slate-200/80 hover:border-purple-200 hover:bg-slate-50 shadow-card'
               }`}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[9px] font-mono text-gray-600">Stage {i + 1}</span>
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  isActive ? 'bg-purple-700 text-white' : 'bg-slate-100 text-slate-600'
+                }`}>
+                  {node.step}
+                </span>
+                <NodeIcon className={`w-4 h-4 ${isActive ? 'text-purple-700' : 'text-slate-400'}`} />
               </div>
-              <div className="flex items-center gap-2">
-                <NodeIcon className="w-4 h-4" style={{ color: isActive ? node.color : '#4b5563' }} />
-                <p className={`text-[11px] font-bold ${isActive ? 'text-accent-300' : 'text-gray-400'}`}>
-                  {node.name.split(' & ')[0]}
-                </p>
-              </div>
-              {isActive && <div className="w-full h-0.5 bg-gradient-to-r from-accent-500 to-cyan-500 rounded-full mt-2" />}
+              <p className={`text-xs font-black truncate ${isActive ? 'text-purple-950' : 'text-slate-800'}`}>
+                {node.name.split(' & ')[0]}
+              </p>
+              <span className="text-[10px] text-slate-400 truncate block mt-0.5">Agent {i + 1}</span>
             </button>
           );
         })}
@@ -106,75 +154,79 @@ export default function PipelinePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.25 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+          transition={{ duration: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-6"
         >
-          {/* Left — Description + I/O */}
-          <GlassCard variant="elevated" className="space-y-4">
-            <div className="flex items-center gap-3 pb-3 border-b border-white/[0.06]">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${active.color}15` }}>
-                <Icon className="w-5 h-5" style={{ color: active.color }} />
+          {/* Left — Description + I/O (7 cols) */}
+          <div className="lg:col-span-7 bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card space-y-5">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-purple-50 border border-purple-200">
+                <Icon className="w-5 h-5 text-purple-700" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">{active.name}</h2>
-                <span className="text-[9px] font-mono text-gray-600">agents/{active.id}_agent.py</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-purple-700 bg-purple-100/70 px-2 py-0.5 rounded-md">Stage {active.step}</span>
+                  <h2 className="text-lg font-black text-slate-900">{active.name}</h2>
+                </div>
+                <span className="text-[11px] font-mono text-slate-400">backend/agents/{active.id}_agent.py</span>
               </div>
             </div>
 
-            <p className="text-xs text-gray-300 leading-relaxed">{active.summary}</p>
+            <p className="text-xs text-slate-600 font-medium leading-relaxed">{active.summary}</p>
 
-            <div className="space-y-3">
-              <div className="p-3 glass-sm space-y-2">
-                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-500 flex items-center gap-1.5">
-                  <ArrowRight className="w-3 h-3 text-accent-400" /> Inputs
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-2">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-purple-700" /> Inputs
                 </span>
-                <ul className="space-y-1">
+                <ul className="space-y-1.5">
                   {active.inputs.map((inp, j) => (
-                    <li key={j} className="text-[11px] text-gray-400 flex items-start gap-2">
-                      <ChevronRight className="w-3 h-3 text-accent-400 mt-0.5 shrink-0" />
+                    <li key={j} className="text-xs text-slate-600 flex items-start gap-2 font-medium">
+                      <ChevronRight className="w-3.5 h-3.5 text-purple-700 mt-0.5 shrink-0" />
                       {inp}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="p-3 glass-sm space-y-2">
-                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-500 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3 h-3 text-green-400" /> Outputs
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Outputs
                 </span>
-                <ul className="space-y-1">
+                <ul className="space-y-1.5">
                   {active.outputs.map((out, j) => (
-                    <li key={j} className="text-[11px] text-gray-400 flex items-start gap-2">
-                      <CheckCircle2 className="w-3 h-3 text-green-500/40 mt-0.5 shrink-0" />
+                    <li key={j} className="text-xs text-slate-600 flex items-start gap-2 font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
                       {out}
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-          </GlassCard>
+          </div>
 
-          {/* Right — Code */}
-          <GlassCard variant="elevated" className="space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-              <span className="text-xs font-bold text-white flex items-center gap-2">
-                <Code className="w-4 h-4 text-accent-400" /> Agent Implementation
-              </span>
-              <span className="text-[9px] font-mono text-gray-600">Python 3.11</span>
+          {/* Right — Code (5 cols) */}
+          <div className="lg:col-span-5 bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card space-y-4 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                  <Code className="w-4 h-4 text-purple-700" /> Agent Implementation
+                </span>
+                <span className="text-[10px] font-mono text-purple-800 bg-purple-50 px-2 py-0.5 rounded-md font-bold">Python 3.11</span>
+              </div>
+
+              <pre className="p-4 bg-slate-900 text-slate-100 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed shadow-inner">
+                <code>{active.code}</code>
+              </pre>
             </div>
 
-            <pre className="p-4 bg-black/30 rounded-xl border border-white/[0.04] overflow-x-auto text-[11px] leading-relaxed">
-              <code className="text-gray-300 font-mono">{active.code}</code>
-            </pre>
-
-            <div className="p-3 glass-sm flex items-start gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-accent-400 mt-0.5 shrink-0" />
-              <p className="text-[10px] text-gray-400 leading-relaxed">
-                Each agent receives the shared <code className="text-accent-300 bg-accent-500/10 px-1 rounded">TriageState</code> TypedDict and
-                returns a partial update that merges into the graph state before the next node executes.
+            <div className="p-3.5 rounded-2xl bg-purple-50/80 border border-purple-200/80 flex items-start gap-2.5 mt-2">
+              <Sparkles className="w-4 h-4 text-purple-700 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-purple-900 font-medium leading-relaxed">
+                State updates are immutably merged into the shared <code className="font-bold text-purple-950 bg-white px-1.5 py-0.5 rounded border border-purple-200">TriageState</code> dictionary before flowing to the next node.
               </p>
             </div>
-          </GlassCard>
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>

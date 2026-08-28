@@ -39,7 +39,7 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
 
     for (let i = 0; i < 5; i++) {
       setCurrentStage(i);
-      await new Promise((r) => setTimeout(r, 300 + Math.random() * 200));
+      await new Promise((r) => setTimeout(r, 280 + Math.random() * 150));
       setCompletedStages((prev) => [...prev, i]);
     }
 
@@ -108,63 +108,71 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
 
   return (
     <div className="h-full flex flex-col gap-4 overflow-y-auto pr-1">
-      {/* Patient Header */}
-      <GlassCard variant="elevated">
+      {/* Patient Header Card */}
+      <GlassCard variant="elevated" className="!p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-black text-white">{patient.name}</h2>
-              <span className="px-2 py-0.5 glass-sm text-[10px] font-mono text-gray-400">
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">{patient.name}</h2>
+              <span className="px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 font-mono">
                 {patient.age}y / {patient.sex}
               </span>
-              <span className="px-2 py-0.5 glass-sm text-[10px] font-mono text-gray-400">
+              <span className="px-2.5 py-0.5 rounded-full bg-purple-50 border border-purple-200 text-xs font-bold text-purple-700 font-mono">
                 {patient.patient_id}
               </span>
             </div>
-            <p className="text-[11px] text-gray-500 mt-1">
-              Arrival: <strong className="text-gray-300 capitalize">{patient.arrival_mode}</strong>
-              <span className="mx-2 text-gray-700">•</span>
-              Prior Records: <strong className={patient.has_prior_records ? 'text-green-400' : 'text-yellow-400'}>
-                {patient.has_prior_records ? 'Available' : 'First Visit'}
+            <p className="text-xs text-slate-500 mt-1.5 font-medium">
+              Arrival Mode: <strong className="text-slate-800 capitalize font-bold">{patient.arrival_mode}</strong>
+              <span className="mx-2 text-slate-300">•</span>
+              Medical Records: <strong className={patient.has_prior_records ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'}>
+                {patient.has_prior_records ? 'Available on EMR' : 'First Emergency Visit'}
               </strong>
             </p>
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleRunTriage}
             disabled={isRunning}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 text-white font-bold text-sm shadow-glow disabled:opacity-50 flex items-center gap-2 transition-all"
+            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold text-xs shadow-purple-sm hover:shadow-purple-md disabled:opacity-60 flex items-center gap-2 transition-all"
           >
             <Zap className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} />
-            {isRunning ? 'Running Pipeline...' : 'Run AI Triage'}
+            {isRunning ? 'Executing 5-Stage Graph...' : 'Run Multi-Agent Triage'}
           </motion.button>
         </div>
 
         {/* Chief Complaint */}
-        <div className="mt-4 p-3 glass-sm flex items-start gap-3">
-          <Stethoscope className="w-4 h-4 text-accent-400 mt-0.5 shrink-0" />
+        <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3.5">
+          <div className="w-8 h-8 rounded-xl bg-purple-100 border border-purple-200/80 flex items-center justify-center shrink-0 mt-0.5">
+            <Stethoscope className="w-4 h-4 text-purple-700" />
+          </div>
           <div>
-            <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-500">Chief Complaint</span>
-            <p className="text-sm text-white mt-0.5">{patient.chief_complaint}</p>
+            <span className="text-[10px] font-black uppercase tracking-wider text-purple-900/70">Clinical Chief Complaint</span>
+            <p className="text-sm font-semibold text-slate-900 mt-0.5 leading-relaxed">{patient.chief_complaint}</p>
           </div>
         </div>
 
         {/* Vitals Grid */}
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 mt-3">
-          <VitalCard icon={Heart} name="HR" value={patient.vitals.hr} unit="bpm" status={getVitalStatus('hr', patient.vitals.hr)} />
-          <VitalCard icon={Activity} name="BP" value={`${patient.vitals.sbp}/${patient.vitals.dbp}`} unit="mmHg" status={getVitalStatus('sbp', patient.vitals.sbp)} />
-          <VitalCard icon={Droplets} name="SpO2" value={patient.vitals.spo2} unit="%" status={getVitalStatus('spo2', patient.vitals.spo2)} />
-          <VitalCard icon={Wind} name="RR" value={patient.vitals.rr} unit="/min" status={getVitalStatus('rr', patient.vitals.rr)} />
-          <VitalCard icon={Thermometer} name="Temp" value={patient.vitals.temp} unit="°C" status={getVitalStatus('temp', patient.vitals.temp)} />
-          <VitalCard icon={Gauge} name="Pain" value={patient.vitals.pain} unit="/10" status={getVitalStatus('pain', patient.vitals.pain || 0)} />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mt-4">
+          <VitalCard icon={Heart} name="Heart Rate" value={patient.vitals.hr} unit="bpm" status={getVitalStatus('hr', patient.vitals.hr)} />
+          <VitalCard icon={Activity} name="Blood Press." value={`${patient.vitals.sbp}/${patient.vitals.dbp}`} unit="mmHg" status={getVitalStatus('sbp', patient.vitals.sbp)} />
+          <VitalCard icon={Droplets} name="SpO2 Sat." value={patient.vitals.spo2} unit="%" status={getVitalStatus('spo2', patient.vitals.spo2)} />
+          <VitalCard icon={Wind} name="Resp. Rate" value={patient.vitals.rr} unit="/min" status={getVitalStatus('rr', patient.vitals.rr)} />
+          <VitalCard icon={Thermometer} name="Body Temp." value={patient.vitals.temp} unit="°C" status={getVitalStatus('temp', patient.vitals.temp)} />
+          <VitalCard icon={Gauge} name="Pain Scale" value={patient.vitals.pain} unit="/10" status={getVitalStatus('pain', patient.vitals.pain || 0)} />
         </div>
       </GlassCard>
 
       {/* Pipeline Progress */}
       {(isRunning || result) && (
-        <GlassCard className="!p-3">
+        <GlassCard className="!p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pipeline Execution Stream</span>
+            <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+              LangGraph StateGraph
+            </span>
+          </div>
           <PipelineVisualizer
             isRunning={isRunning}
             currentStage={currentStage}
@@ -176,29 +184,29 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
 
       {/* Triage Result */}
       {result && (
-        <GlassCard variant="elevated" className="space-y-5">
+        <GlassCard variant="elevated" className="!p-6 space-y-5">
           {/* Result Header */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
-                AI Triage Assessment
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                AI Clinical Triage Determination
               </span>
               <div className="flex items-center gap-3">
                 <ESIBadge esi={result.final_esi} size="lg" pulse />
                 <span
-                  className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wide border ${
+                  className={`px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wide border ${
                     result.action_type === 'DECIDE'
-                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
                       : result.action_type === 'ESCALATE'
-                      ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-                      : 'bg-green-500/10 text-green-400 border-green-500/20'
+                      ? 'bg-amber-50 text-amber-800 border-amber-200'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                   }`}
                 >
                   {result.action_type === 'DECIDE'
-                    ? '⚡ Autonomous Escalation'
+                    ? '⚡ Autonomous Red-Flag Escalation'
                     : result.action_type === 'ESCALATE'
-                    ? '⬆ Senior Review'
-                    : '✓ Recommendation'}
+                    ? '⬆ Senior Clinician Review'
+                    : '✓ Verified Recommendation'}
                 </span>
               </div>
             </div>
@@ -206,23 +214,23 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
             <div className="flex items-center gap-6">
               <ConfidenceGauge value={result.final_confidence} />
               <div className="text-right">
-                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Routing</span>
-                <p className="text-lg font-black gradient-text">{result.routing}</p>
+                <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black">Target Department</span>
+                <p className="text-xl font-black text-purple-900 mt-0.5">{result.routing}</p>
               </div>
             </div>
           </div>
 
           {/* Safety Overrides */}
           {result.safety_overrides?.length > 0 && (
-            <div className="p-3 rounded-xl border border-red-500/20 bg-red-500/5 space-y-2">
-              <div className="flex items-center gap-2 text-red-400 text-sm font-bold">
+            <div className="p-4 rounded-2xl border border-rose-200 bg-rose-50/70 space-y-2">
+              <div className="flex items-center gap-2 text-rose-800 text-xs font-black">
                 <ShieldAlert className="w-4 h-4" />
-                Safety Override ({result.safety_overrides.length} rule{result.safety_overrides.length > 1 ? 's' : ''} triggered)
+                Hard Safety Override Triggered ({result.safety_overrides.length} Rule{result.safety_overrides.length > 1 ? 's' : ''})
               </div>
               {result.safety_overrides.map((rule, idx) => (
-                <p key={idx} className="text-[11px] text-red-300/80 pl-6">
-                  <span className="font-mono text-red-400">[{rule.rule_id}]</span>{' '}
-                  {rule.rule_name}: {rule.triggered_by}
+                <p key={idx} className="text-xs text-rose-900 font-medium pl-6">
+                  <span className="font-mono font-bold text-rose-700">[{rule.rule_id}]</span>{' '}
+                  <strong className="font-bold">{rule.rule_name}:</strong> {rule.triggered_by} ➔ Action: {rule.action}
                 </p>
               ))}
             </div>
@@ -230,11 +238,11 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
 
           {/* RAG Rationale */}
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-accent-400" />
-              AI Clinical Rationale
+            <span className="text-[11px] font-black uppercase tracking-wider text-purple-950 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-purple-700" />
+              Evidence-Based Clinical Rationale (ESI Handbook v4)
             </span>
-            <div className="mt-2 p-4 glass-sm text-sm text-gray-300 leading-relaxed">
+            <div className="mt-2 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 font-medium leading-relaxed">
               {result.rag_rationale}
             </div>
           </div>
@@ -243,8 +251,8 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
           {result.recommendations?.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {result.recommendations.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-2 glass-sm text-[11px] text-gray-300">
-                  <CheckCircle2 className="w-3 h-3 text-green-500 shrink-0" />
+                <div key={idx} className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs font-semibold text-slate-700">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   {item}
                 </div>
               ))}
@@ -252,18 +260,18 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
             <button
               onClick={() => setIsOverrideOpen(true)}
-              className="px-4 py-2 glass-sm hover:bg-yellow-500/10 text-yellow-400 text-xs font-bold transition-colors flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 text-xs font-bold transition-all flex items-center gap-1.5"
             >
               <AlertTriangle className="w-3.5 h-3.5" />
-              Clinical Override
+              Manual Clinical Override
             </button>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleRunTriage}
-                className="px-4 py-2 glass-sm text-gray-300 text-xs font-semibold flex items-center gap-1.5"
+                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Re-Triage
@@ -273,18 +281,18 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
                 whileTap={{ scale: 0.98 }}
                 onClick={handleConfirmRoute}
                 disabled={isConfirming || Boolean(routedSuccess)}
-                className={`px-5 py-2 rounded-xl text-white text-xs font-bold shadow-lg flex items-center gap-1.5 transition-all ${
+                className={`px-6 py-2.5 rounded-xl text-white text-xs font-bold shadow-md flex items-center gap-1.5 transition-all ${
                   routedSuccess
-                    ? 'bg-emerald-600 shadow-emerald-500/30'
-                    : 'bg-gradient-to-r from-green-500 to-emerald-600'
+                    ? 'bg-emerald-600'
+                    : 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600'
                 }`}
               >
-                <UserCheck className="w-3.5 h-3.5" />
+                <UserCheck className="w-4 h-4" />
                 {isConfirming
-                  ? 'Routing...'
+                  ? 'Routing to Bay...'
                   : routedSuccess
                   ? `✓ Routed to ${routedSuccess}`
-                  : 'Confirm & Route'}
+                  : 'Confirm & Route Patient'}
               </motion.button>
             </div>
           </div>
@@ -294,25 +302,27 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
       {/* Override Modal */}
       <AnimatePresence>
         {isOverrideOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.94, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="glass-lg p-6 max-w-md w-full space-y-4 shadow-glow-lg"
+              exit={{ scale: 0.94, opacity: 0 }}
+              className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl border border-slate-200"
             >
-              <h3 className="text-lg font-bold gradient-text">Clinical Override</h3>
+              <h3 className="text-lg font-black text-slate-900">Manual Clinical Override</h3>
+              <p className="text-xs text-slate-500">Record a doctor-authorized acuity level change with clinical justification into the governance audit trail.</p>
+              
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-400">New ESI Level</label>
+                <label className="text-xs font-bold text-slate-700">Select New ESI Level</label>
                 <div className="grid grid-cols-5 gap-2">
                   {[1, 2, 3, 4, 5].map((lvl) => (
                     <button
                       key={lvl}
                       onClick={() => setOverrideEsi(lvl)}
-                      className={`p-2.5 glass-sm text-xs font-bold transition-all ${
+                      className={`p-2.5 rounded-xl text-xs font-bold border transition-all ${
                         overrideEsi === lvl
-                          ? 'bg-accent-500/15 border-accent-500/40 text-accent-300 shadow-glass'
-                          : 'text-gray-400 hover:text-white'
+                          ? 'bg-purple-700 border-purple-700 text-white shadow-purple-sm'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       ESI-{lvl}
@@ -321,19 +331,19 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-400">Clinical Justification</label>
+                <label className="text-xs font-bold text-slate-700">Clinical Justification</label>
                 <textarea
                   rows={3}
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
-                  placeholder="State clinical rationale..."
-                  className="w-full p-3 bg-white/[0.03] border border-white/[0.06] rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none focus:border-accent-500/40 transition-colors"
+                  placeholder="State physician rationale for acuity change..."
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 pt-2">
                 <button
                   onClick={() => setIsOverrideOpen(false)}
-                  className="px-4 py-2 text-xs text-gray-400 hover:text-white"
+                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900"
                 >
                   Cancel
                 </button>
@@ -342,9 +352,9 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
                   whileTap={{ scale: 0.98 }}
                   onClick={handleOverrideSubmit}
                   disabled={overrideSubmitted || !overrideReason.trim()}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 text-white text-xs font-bold shadow-glow disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-purple-sm disabled:opacity-50"
                 >
-                  {overrideSubmitted ? '✓ Submitted' : 'Submit Override'}
+                  {overrideSubmitted ? '✓ Logged to Audit' : 'Confirm Override'}
                 </motion.button>
               </div>
             </motion.div>
