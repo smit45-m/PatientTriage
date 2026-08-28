@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import ParticleBackground from "@/components/ParticleBackground";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen bg-[#F8F9FC] text-slate-900 antialiased overflow-x-hidden relative flex flex-col`}>
+      <body className={`${inter.className} min-h-screen bg-[#F8F9FC] text-slate-900 antialiased overflow-x-hidden relative flex flex-col justify-between`}>
         <ParticleBackground />
 
         {/* Ambient subtle purple/indigo decorative light gradients */}
@@ -31,6 +32,8 @@ export default function RootLayout({
         <div className="relative z-10 flex-1 flex flex-col">
           {children}
         </div>
+
+        <Footer />
       </body>
     </html>
   );
