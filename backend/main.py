@@ -1,8 +1,8 @@
-"""PatientTriage.ai — FastAPI Backend Server v2.0"""
-from fastapi import FastAPI, HTTPException
+"""PatientTriage.ai — FastAPI Backend Server v2.0 with JWT Authentication"""
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Dict, Any
+from pydantic import BaseModel, EmailStr
+from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 
 from data.patients import get_all_patients, get_patient_by_id
@@ -15,10 +15,12 @@ from config.settings import (
     get_profile, set_profile, PROFILES,
     ESI_WAIT_THRESHOLDS, PIPELINE_VERSION,
 )
+from auth.jwt_handler import create_access_token, get_current_user, get_current_user_optional
+from auth.users import authenticate_user, register_user, get_user_by_email, get_safe_user_profile, get_demo_users
 
 app = FastAPI(
     title="PatientTriage.ai API",
-    description="AI-Powered Emergency Department Triage Assistant",
+    description="AI-Powered Emergency Department Triage Assistant with JWT Authentication",
     version=PIPELINE_VERSION,
 )
 
@@ -39,6 +41,20 @@ override_handler = OverrideHandler(audit_logger)
 
 # ── Pydantic Request Models ──────────────────────────────────────────
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+    role: Optional[str] = "Emergency Clinician"
+    hospital: Optional[str] = "Metro Level I Trauma Center"
+    specialty: Optional[str] = "Emergency Medicine"
+    avatar: Optional[str] = "/doctors/dr_rohit_sharma.jpg"
+    badge: Optional[str] = "Staff Clinician"
+
 class PatientIdRequest(BaseModel):
     patient_id: str
 
@@ -58,42 +74,118 @@ class ConfirmRouteRequest(BaseModel):
     patient_id: str
     name: str = "Unknown"
     final_esi: int = 3
-    routing: str = "Urgent Care"
-    nurse_id: str = "RN-Sarah"
+    target_bay: str = "Emergency Ward"
+    nurse_id: str = "RN-Triage"
 
 class ConfigProfileRequest(BaseModel):
     profile: str
 
 
-# ── Patient Endpoints ────────────────────────────────────────────────
+# ── Authentication Endpoints (JWT) ───────────────────────────────────
+
+@app.post("/api/auth/login")
+def login(req: LoginRequest):
+    """Authenticate clinician credentials and issue a signed JWT access token."""
+    user = authenticate_user(req.email, req.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email/staff ID or password"
+        )
+    
+    token_payload = {
+        "sub": user["id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": user["role"],
+        "hospital": user["hospital"],
+        "badge": user["badge"],
+        "avatar": user["avatar"]
+    }
+    access_token = create_access_token(token_payload)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user
+    }
+
+
+@app.post("/api/auth/register")
+def register(req: RegisterRequest):
+    """Register a new emergency clinician and return their JWT access token."""
+    try:
+        user = register_user(
+            email=req.email,
+            password=req.password,
+            name=req.name,
+            role=req.role or "Emergency Clinician",
+            hospital=req.hospital or "Metro Trauma Center",
+            specialty=req.specialty or "Emergency Medicine",
+            avatar=req.avatar or "/doctors/dr_rohit_sharma.jpg",
+            badge=req.badge or "Staff Clinician"
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    
+    token_payload = {
+        "sub": user["id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": user["role"],
+        "hospital": user["hospital"],
+        "badge": user["badge"],
+        "avatar": user["avatar"]
+    }
+    access_token = create_access_token(token_payload)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user
+    }
+
+
+@app.get("/api/auth/me")
+def get_current_user_profile(user_payload: dict = Depends(get_current_user)):
+    """Return the profile of the authenticated clinician extracted from the JWT token."""
+    user_record = get_user_by_email(user_payload.get("email", ""))
+    if user_record:
+        return {"user": get_safe_user_profile(user_record)}
+    return {"user": user_payload}
+
+
+@app.get("/api/auth/demo-users")
+def list_demo_users():
+    """Return pre-seeded demo clinical profiles for 1-click test login."""
+    return {"demo_users": get_demo_users()}
+
+
+# ── Patient & Triage Endpoints ────────────────────────────────────────
 
 @app.get("/api/patients")
-def get_patients():
+def list_patients():
     return get_all_patients()
 
 @app.get("/api/patients/{patient_id}")
 def get_patient(patient_id: str):
-    patient = get_patient_by_id(patient_id)
-    if not patient:
+    p = get_patient_by_id(patient_id)
+    if not p:
         raise HTTPException(status_code=404, detail=f"Patient {patient_id} not found")
-    return patient
-
-
-# ── Triage Endpoints ─────────────────────────────────────────────────
+    return p
 
 @app.post("/api/triage")
-def run_triage_endpoint(req: PatientIdRequest):
+def triage_patient(req: PatientIdRequest):
     patient = get_patient_by_id(req.patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail=f"Patient {req.patient_id} not found")
     result = run_triage(patient)
     if "audit_entry" in result:
         audit_logger.log_triage(result["audit_entry"])
-    surge_detector.record_arrival()
     return result
 
 @app.post("/api/triage/custom")
-def run_custom_triage(patient: Dict[str, Any]):
+def triage_custom_patient(patient: Dict[str, Any]):
+    if "patient_id" not in patient:
+        patient["patient_id"] = f"CUSTOM-{datetime.now(timezone.utc).strftime('%H%M%S')}"
     result = run_triage(patient)
     if "audit_entry" in result:
         audit_logger.log_triage(result["audit_entry"])
@@ -101,52 +193,40 @@ def run_custom_triage(patient: Dict[str, Any]):
 
 @app.post("/api/triage/confirm")
 @app.post("/api/confirm")
-def confirm_route_endpoint(req: ConfirmRouteRequest):
-    # Add patient to waiting room queue with current timestamp
-    waiting_room.add_patient(
-        patient_id=req.patient_id,
-        name=req.name,
-        esi_level=req.final_esi,
-        arrival_time=datetime.now(timezone.utc).isoformat()
-    )
-    # Log confirm action in audit trail
+def confirm_route(req: ConfirmRouteRequest):
+    """Confirm patient triage acuity and route them to their designated bay."""
+    waiting_room.remove_patient(req.patient_id)
     audit_logger.log_triage({
-        "event_id": f"evt-conf-{int(datetime.now(timezone.utc).timestamp())}",
+        "event_id": f"ROUTE-{datetime.now(timezone.utc).strftime('%H%M%S')}",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "patient_id": req.patient_id,
         "name": req.name,
-        "nurse_id": req.nurse_id,
         "final_esi": req.final_esi,
-        "routing": req.routing,
-        "action_type": "CONFIRM_AND_ROUTE",
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "action_type": "CONFIRM_ROUTE",
+        "routing": req.target_bay,
+        "nurse_id": req.nurse_id
     })
     return {
-        "status": "confirmed",
+        "status": "routed",
         "patient_id": req.patient_id,
-        "routing": req.routing,
-        "final_esi": req.final_esi,
-        "message": f"Patient {req.patient_id} successfully confirmed and routed to {req.routing}"
+        "target_bay": req.target_bay,
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 
-# ── Override Endpoints ───────────────────────────────────────────────
+# ── Safety & Override Endpoints ──────────────────────────────────────
 
 @app.post("/api/override")
-def submit_override(req: OverrideRequest):
-    result = override_handler.process_override(
-        patient_id=req.patient_id,
-        original_esi=req.original_esi,
-        new_esi=req.new_esi,
-        reason=req.reason,
-        nurse_id=req.nurse_id,
+def override_triage(req: OverrideRequest):
+    return override_handler.process_override(
+        req.patient_id, req.original_esi, req.new_esi, req.reason, req.nurse_id
     )
-    return result
 
 
-# ── Audit Endpoints ──────────────────────────────────────────────────
+# ── Audit Log Endpoints ──────────────────────────────────────────────
 
 @app.get("/api/audit")
-def get_all_audit_logs():
+def get_audit_logs():
     return audit_logger.get_all_logs()
 
 @app.get("/api/audit/{patient_id}")
