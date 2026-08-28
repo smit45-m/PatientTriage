@@ -61,14 +61,21 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Status */}
-        <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 shadow-xs">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span className="text-xs font-semibold text-slate-700">Multi-Agent Engine</span>
-          <span className="text-[10px] font-bold text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-full">v2.0 Active</span>
+        {/* Active Clinician Profile */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 shadow-xs">
+            <div className="relative w-6 h-6 rounded-full overflow-hidden border border-purple-300 shrink-0">
+              <img
+                src="/doctors/nurse_sarah.jpg"
+                alt="RN-Sarah"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[11px] font-bold text-slate-800 leading-tight">RN-Sarah</span>
+              <span className="text-[9px] text-purple-700 font-semibold leading-tight">Triage Charge</span>
+            </div>
+          </div>
         </div>
       </div>
     </nav>

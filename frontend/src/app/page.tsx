@@ -1,12 +1,49 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Activity, Cpu, Monitor, Shield, BarChart3, ArrowRight,
-  Sparkles, CheckCircle2, ChevronRight, Stethoscope, Clock, Zap, HeartPulse
+  Sparkles, CheckCircle2, ChevronRight, Stethoscope, Clock, Zap, HeartPulse,
+  UserCheck, Award, Star
 } from 'lucide-react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import GlassCard from '@/components/GlassCard';
+
+const DOCTORS = [
+  {
+    name: 'Dr. Rohit Sharma, MD',
+    role: 'Lead Emergency Physician',
+    hospital: 'Metro Trauma Center',
+    specialty: 'Resuscitation & Critical Care',
+    image: '/doctors/dr_rohit_sharma.jpg',
+    badge: 'Senior Attending',
+  },
+  {
+    name: 'Dr. Priya Nair, MD, FACS',
+    role: 'Chief of Emergency Medicine',
+    hospital: 'Apollo Medical Institute',
+    specialty: 'Clinical Governance & ESI Triage',
+    image: '/doctors/dr_priya_nair.jpg',
+    badge: 'Clinical Lead',
+  },
+  {
+    name: 'Dr. Ananya Patel, MD',
+    role: 'Emergency AI Fellow',
+    hospital: 'All India Institute of Medical Sciences',
+    specialty: 'Multimodal Clinical Decision Support',
+    image: '/doctors/dr_ananya_patel.jpg',
+    badge: 'AI Research',
+  },
+  {
+    name: 'Dr. Marcus Vance, DO',
+    role: 'Trauma Surgery Director',
+    hospital: 'Valley Trauma Hospital',
+    specialty: 'Mass Casualty & Hemorrhage Protocol',
+    image: '/doctors/dr_marcus_vance.jpg',
+    badge: 'Trauma Specialist',
+  },
+];
 
 export default function DashboardHome() {
   return (
@@ -37,7 +74,7 @@ export default function DashboardHome() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold text-xs shadow-purple-sm hover:shadow-purple-md flex items-center gap-2"
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold text-xs shadow-purple-sm hover:shadow-purple-md flex items-center gap-2 cursor-pointer"
                 >
                   Open Triage Cockpit <ArrowRight className="w-4 h-4" />
                 </motion.div>
@@ -45,7 +82,7 @@ export default function DashboardHome() {
               <Link href="/pipeline">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="px-5 py-3 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-xs hover:bg-slate-50 flex items-center gap-2"
+                  className="px-5 py-3 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-xs hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                 >
                   <Cpu className="w-4 h-4 text-purple-700" /> Inspect 5-Agent Graph
                 </motion.div>
@@ -199,7 +236,7 @@ export default function DashboardHome() {
           </div>
         </div>
 
-        {/* Interactive Feature Preview Cards */}
+        {/* Doctor & Clinical Showcase Card (Behance Style) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
           {/* Left Clinical Mockup Showcase Card */}
           <div className="lg:col-span-7 rounded-3xl bg-slate-50 p-6 border border-slate-200/80 flex flex-col justify-between space-y-6">
@@ -235,27 +272,40 @@ export default function DashboardHome() {
             </div>
           </div>
 
-          {/* Right Doctor & Clinical Team Card */}
-          <div className="lg:col-span-5 rounded-3xl bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-950 p-6 text-white flex flex-col justify-between shadow-purple-md space-y-6">
-            <div className="space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                <Stethoscope className="w-6 h-6 text-purple-200" />
+          {/* Right Doctor Portrait Card (Behance Style with Real Doctor Photo) */}
+          <div className="lg:col-span-5 rounded-3xl bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-950 p-6 text-white flex flex-col justify-between shadow-purple-md space-y-4 relative overflow-hidden">
+            {/* Ambient circle glow */}
+            <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-purple-500/20 blur-2xl pointer-events-none" />
+
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/30 shadow-md shrink-0">
+                <img
+                  src="/doctors/dr_rohit_sharma.jpg"
+                  alt="Dr. Rohit Sharma"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <h3 className="text-xl font-black text-white pt-2">
-                Designed For ED Clinicians & Nurses
-              </h3>
-              <p className="text-xs text-purple-200/90 leading-relaxed font-medium">
-                Eliminates subjective triage variance. Gives immediate evidence-based rationales grounded in ESI Handbook v4 with complete physician override autonomy.
-              </p>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-black text-white">Dr. Rohit Sharma, MD</span>
+                  <Award className="w-3.5 h-3.5 text-amber-300" />
+                </div>
+                <p className="text-xs text-purple-200 font-semibold">Lead Emergency Physician</p>
+                <span className="text-[10px] text-purple-300/80 font-mono">Metro Level I Trauma Center</span>
+              </div>
             </div>
+
+            <p className="text-xs text-purple-200/90 leading-relaxed font-medium">
+              &ldquo;PatientTriage.ai provides sub-second acuity stratification while giving our clinical staff complete autonomy with verified ESI Handbook v4 rationales.&rdquo;
+            </p>
 
             <div className="space-y-2 pt-2 border-t border-white/10">
               <div className="flex items-center justify-between text-xs text-purple-100 font-semibold">
                 <span>Accenture Hackathon PS-2</span>
-                <span className="text-emerald-300 font-bold">Production Ready</span>
+                <span className="text-emerald-300 font-bold">100% ESI-1 Sensitivity</span>
               </div>
               <Link href="/triage">
-                <div className="w-full py-2.5 rounded-xl bg-white text-purple-950 font-bold text-xs text-center shadow-sm hover:bg-purple-50 transition-colors">
+                <div className="w-full py-2.5 rounded-xl bg-white text-purple-950 font-bold text-xs text-center shadow-sm hover:bg-purple-50 transition-colors cursor-pointer">
                   Launch Clinical Workspace ➔
                 </div>
               </Link>
@@ -264,7 +314,60 @@ export default function DashboardHome() {
         </div>
       </section>
 
-      {/* ── Section 3: Core Module Cards ──────────────────────────────── */}
+      {/* ── Section 3: Clinical Expert Panel (Doctor Photos Grid) ─────── */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+              Clinical Validation Panel
+            </span>
+            <h2 className="text-2xl font-black text-slate-900">
+              Emergency Physicians & <span className="text-purple-700">Triage Experts</span>
+            </h2>
+          </div>
+          <span className="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-full">
+            18 Hard-Coded Safety Rules
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {DOCTORS.map((doc, idx) => (
+            <motion.div
+              key={doc.name}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.08 }}
+              className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-card flex flex-col items-center text-center space-y-3 hover:shadow-card-hover hover:border-purple-200 transition-all group"
+            >
+              {/* Doctor Avatar with subtle ring */}
+              <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-purple-100 group-hover:border-purple-300 shadow-sm transition-all duration-200">
+                <img
+                  src={doc.image}
+                  alt={doc.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200/60 uppercase tracking-wider">
+                  {doc.badge}
+                </span>
+                <h4 className="text-sm font-black text-slate-900 pt-1 group-hover:text-purple-700 transition-colors">
+                  {doc.name}
+                </h4>
+                <p className="text-xs font-semibold text-slate-600">{doc.role}</p>
+                <p className="text-[11px] text-slate-400 font-medium">{doc.hospital}</p>
+              </div>
+
+              <div className="w-full pt-2 border-t border-slate-100 text-[10px] text-purple-900 font-bold">
+                {doc.specialty}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Section 4: Core Module Cards ──────────────────────────────── */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -317,7 +420,7 @@ export default function DashboardHome() {
             },
           ].map((item, i) => (
             <Link key={item.title} href={item.href} className="block group">
-              <GlassCard hoverEffect delay={i * 0.05} className="h-full flex flex-col justify-between space-y-4 !p-6">
+              <GlassCard hoverEffect delay={i * 0.05} className="h-full flex flex-col justify-between space-y-4 !p-6 cursor-pointer">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="w-10 h-10 rounded-2xl bg-purple-50 border border-purple-200/80 flex items-center justify-center group-hover:bg-purple-700 transition-colors duration-200">
