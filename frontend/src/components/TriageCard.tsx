@@ -220,6 +220,64 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
             </div>
           </div>
 
+          {/* ── Expected vs Predicted Accuracy Comparison ── */}
+          <div className="p-4 rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 to-white space-y-3">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-500">
+              <Gauge className="w-4 h-4 text-purple-700" />
+              Prediction Accuracy — Expected vs Predicted ESI
+            </div>
+            <div className="grid grid-cols-3 gap-4 items-center">
+              {/* Expected ESI */}
+              <div className="text-center p-3 rounded-xl bg-slate-100 border border-slate-200">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Ground Truth (Expected)</span>
+                <span className="text-3xl font-black text-slate-900">ESI-{patient.expected_esi}</span>
+              </div>
+
+              {/* Arrow + Match status */}
+              <div className="text-center flex flex-col items-center gap-1">
+                {result.final_esi === patient.expected_esi ? (
+                  <>
+                    <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                    <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                      ✓ Exact Match
+                    </span>
+                  </>
+                ) : Math.abs(result.final_esi - patient.expected_esi) === 1 ? (
+                  <>
+                    <AlertTriangle className="w-8 h-8 text-amber-500" />
+                    <span className="text-xs font-black text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                      ±1 Level ({result.final_esi < patient.expected_esi ? 'Safe Over-Triage' : 'Under-Triage'})
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldAlert className="w-8 h-8 text-rose-500" />
+                    <span className="text-xs font-black text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
+                      ⚠ {Math.abs(result.final_esi - patient.expected_esi)}-Level Deviation
+                    </span>
+                  </>
+                )}
+                <span className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                  Δ = {result.final_esi - patient.expected_esi > 0 ? '+' : ''}{result.final_esi - patient.expected_esi}
+                </span>
+              </div>
+
+              {/* Predicted ESI */}
+              <div className="text-center p-3 rounded-xl bg-purple-50 border border-purple-200">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-500 block mb-1">AI Predicted</span>
+                <span className="text-3xl font-black text-purple-800">ESI-{result.final_esi}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-4 text-[10px] text-slate-400 font-semibold pt-1 border-t border-slate-100">
+              <span>Confidence: <strong className="text-slate-700">{(result.final_confidence * 100).toFixed(1)}%</strong></span>
+              <span className="text-slate-200">|</span>
+              <span>Safety Overrides: <strong className="text-slate-700">{result.safety_overrides?.length || 0}</strong></span>
+              <span className="text-slate-200">|</span>
+              <span>Action: <strong className="text-slate-700">{result.action_type}</strong></span>
+            </div>
+          </div>
+
           {/* Safety Overrides */}
           {result.safety_overrides?.length > 0 && (
             <div className="p-4 rounded-2xl border border-rose-200 bg-rose-50/70 space-y-2">

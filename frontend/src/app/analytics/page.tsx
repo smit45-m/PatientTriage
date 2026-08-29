@@ -1,8 +1,14 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Sparkles, Trophy, CheckCircle2, TrendingUp, Award } from 'lucide-react';
+import {
+  BarChart3, Sparkles, Trophy, CheckCircle2, TrendingUp, Award,
+  Target, Loader2, AlertTriangle, ShieldCheck, Zap, XCircle
+} from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import ESIBadge from '@/components/ESIBadge';
+import { fetchAccuracy } from '@/lib/api';
 
 const BENCHMARKS = [
   { metric: '5-Class AUROC', target: '≥ 0.85', rag: '0.8993', llm: '0.8920', impact: 'More consistent across ESI acuity levels' },
@@ -24,6 +30,23 @@ const CONFUSION = [
 ];
 
 export default function AnalyticsPage() {
+  const [accuracyData, setAccuracyData] = useState<any>(null);
+  const [accuracyLoading, setAccuracyLoading] = useState(false);
+  const [accuracyError, setAccuracyError] = useState<string | null>(null);
+
+  const runAccuracyCheck = async () => {
+    setAccuracyLoading(true);
+    setAccuracyError(null);
+    try {
+      const data = await fetchAccuracy();
+      setAccuracyData(data);
+    } catch (err: any) {
+      setAccuracyError(err.message || 'Failed to compute accuracy. Ensure backend is running on port 8000.');
+    } finally {
+      setAccuracyLoading(false);
+    }
+  };
+
   return (
     <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-8">
       {/* Header */}
@@ -43,7 +66,183 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Headline KPIs */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* LIVE MODEL ACCURACY — Expected vs Predicted on Active Cohort   */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <GlassCard variant="elevated" className="!p-6 space-y-5 border-2 border-purple-200/60">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+              <Target className="w-5 h-5 text-purple-700" />
+              Live Model Accuracy — Expected vs Predicted ESI
+            </h3>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Runs ALL active patients through the 5-stage pipeline and compares predicted ESI with clinician-labeled ground truth.
+            </p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={runAccuracyCheck}
+            disabled={accuracyLoading}
+            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold text-xs shadow-purple-sm hover:shadow-purple-md disabled:opacity-60 flex items-center gap-2 transition-all"
+          >
+            {accuracyLoading ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Computing Accuracy...</>
+            ) : (
+              <><Zap className="w-4 h-4" /> Run Accuracy Benchmark</>
+            )}
+          </motion.button>
+        </div>
+
+        {accuracyError && (
+          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-semibold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            {accuracyError}
+          </div>
+        )}
+
+        {accuracyData && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+            {/* Summary KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 text-center shadow-xs">
+                <span className="text-3xl font-black text-emerald-700">{accuracyData.exact_match_accuracy_pct}%</span>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">Exact Match Accuracy</p>
+                <p className="text-[10px] text-slate-500 font-medium">{accuracyData.exact_matches} / {accuracyData.total_patients} patients</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 text-center shadow-xs">
+                <span className="text-3xl font-black text-purple-800">{accuracyData.within_1_accuracy_pct}%</span>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">Within ±1 ESI Accuracy</p>
+                <p className="text-[10px] text-slate-500 font-medium">{accuracyData.within_1_matches} / {accuracyData.total_patients} patients</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 text-center shadow-xs">
+                <span className="text-3xl font-black text-amber-700">{accuracyData.over_triage_rate_pct}%</span>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">Safe Over-Triage Rate</p>
+                <p className="text-[10px] text-emerald-600 font-semibold">✓ Clinically safe bias</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 text-center shadow-xs">
+                <span className={`text-3xl font-black ${accuracyData.under_triage_rate_pct > 5 ? 'text-rose-700' : 'text-emerald-700'}`}>
+                  {accuracyData.under_triage_rate_pct}%
+                </span>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">Under-Triage Rate</p>
+                <p className="text-[10px] text-slate-500 font-medium">Dangerous misses (lower = safer)</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 text-center shadow-xs">
+                <span className="text-3xl font-black text-indigo-800">{accuracyData.total_patients}</span>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">Total Patients Evaluated</p>
+                <p className="text-[10px] text-slate-500 font-medium">Active clinical cohort</p>
+              </div>
+            </div>
+
+            {/* Per-ESI Accuracy Breakdown */}
+            {accuracyData.per_esi_accuracy && Object.keys(accuracyData.per_esi_accuracy).length > 0 && (
+              <div>
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Per-ESI Level Accuracy Breakdown</h4>
+                <div className="grid grid-cols-5 gap-2">
+                  {[1, 2, 3, 4, 5].map((esi) => {
+                    const key = `ESI-${esi}`;
+                    const data = accuracyData.per_esi_accuracy[key];
+                    if (!data) return (
+                      <div key={esi} className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <ESIBadge esi={esi} size="sm" />
+                        <p className="text-[10px] text-slate-400 mt-1">No patients</p>
+                      </div>
+                    );
+                    const color = data.accuracy_pct >= 80 ? 'text-emerald-700' : data.accuracy_pct >= 50 ? 'text-amber-700' : 'text-rose-700';
+                    return (
+                      <div key={esi} className="p-3 rounded-xl bg-white border border-slate-200 text-center shadow-xs">
+                        <ESIBadge esi={esi} size="sm" />
+                        <p className={`text-xl font-black ${color} mt-1`}>{data.accuracy_pct}%</p>
+                        <p className="text-[10px] text-slate-500 font-medium">{data.correct} / {data.total}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Per-Patient Accuracy Table */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Patient-Level Prediction Detail</h4>
+              <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 text-[10px] uppercase tracking-wider font-bold">
+                    <tr>
+                      <th className="p-3">Patient</th>
+                      <th className="p-3">Age/Sex</th>
+                      <th className="p-3">Chief Complaint</th>
+                      <th className="p-3 text-center">Expected ESI</th>
+                      <th className="p-3 text-center">Predicted ESI</th>
+                      <th className="p-3 text-center">Match</th>
+                      <th className="p-3 text-center">Confidence</th>
+                      <th className="p-3 text-center">Overrides</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {accuracyData.per_patient.map((p: any, i: number) => (
+                      <motion.tr
+                        key={p.patient_id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: i * 0.03 }}
+                        className="hover:bg-slate-50/60 transition-colors"
+                      >
+                        <td className="p-3 font-bold text-slate-900">
+                          <span className="font-mono text-purple-700 text-[10px]">{p.patient_id}</span>
+                          <br />
+                          <span className="text-slate-700">{p.name}</span>
+                        </td>
+                        <td className="p-3 text-slate-500 font-mono font-medium">{p.age}{p.sex}</td>
+                        <td className="p-3 text-slate-600 font-medium max-w-[200px] truncate">{p.chief_complaint}</td>
+                        <td className="p-3 text-center">
+                          <ESIBadge esi={p.expected_esi} size="sm" />
+                        </td>
+                        <td className="p-3 text-center">
+                          <ESIBadge esi={p.predicted_esi} size="sm" />
+                        </td>
+                        <td className="p-3 text-center">
+                          {p.is_exact_match ? (
+                            <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3" /> Exact
+                            </span>
+                          ) : p.is_within_1 ? (
+                            <span className="inline-flex items-center gap-1 text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                              <AlertTriangle className="w-3 h-3" /> ±1
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                              <XCircle className="w-3 h-3" /> Miss
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-3 text-center font-mono font-bold text-slate-700">{(p.confidence * 100).toFixed(1)}%</td>
+                        <td className="p-3 text-center">
+                          {p.safety_overrides > 0 ? (
+                            <span className="text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">{p.safety_overrides}</span>
+                          ) : (
+                            <span className="text-slate-400">0</span>
+                          )}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {!accuracyData && !accuracyLoading && !accuracyError && (
+          <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl">
+            <Target className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+            <p className="text-sm font-bold text-slate-500">Click &quot;Run Accuracy Benchmark&quot; to evaluate model predictions against ground truth</p>
+            <p className="text-xs text-slate-400 mt-1">This runs all patients through the live 5-stage pipeline and compares expected vs predicted ESI.</p>
+          </div>
+        )}
+      </GlassCard>
+
+      {/* Headline KPIs (1,200 cohort) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { value: 0.8993, decimals: 4, label: '5-Class AUROC', color: 'text-purple-800' },
