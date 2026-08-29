@@ -181,6 +181,12 @@ export async function fetchPatientAuditLogs(
   return apiFetch<AuditEntry[]>(`/api/audit/${patientId}`);
 }
 
+// ── Analytics & Accuracy Endpoints ─────────────────────────────────────────
+
+export async function fetchAccuracy(): Promise<Record<string, any>> {
+  return apiFetch('/api/accuracy');
+}
+
 // ── Config Endpoints ───────────────────────────────────────────────────────
 
 export async function fetchConfig(): Promise<Record<string, unknown>> {

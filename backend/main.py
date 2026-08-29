@@ -273,6 +273,93 @@ def toggle_surge():
     return {"is_surge": surge_detector.manual_surge, "surge_level": "ACTIVE" if surge_detector.manual_surge else "NORMAL"}
 
 
+# ── Live Model Accuracy Endpoint ─────────────────────────────────────
+
+@app.get("/api/accuracy")
+def compute_accuracy():
+    """Run triage on ALL patients, compare predicted vs expected ESI, return real accuracy."""
+    patients = get_all_patients()
+    total = len(patients)
+    exact_matches = 0
+    within_1 = 0
+    per_patient = []
+    esi_counts = {1: {"total": 0, "correct": 0}, 2: {"total": 0, "correct": 0},
+                  3: {"total": 0, "correct": 0}, 4: {"total": 0, "correct": 0},
+                  5: {"total": 0, "correct": 0}}
+    under_triage = 0
+    over_triage = 0
+
+    for p in patients:
+        expected = p.get("expected_esi", 3)
+        try:
+            result = run_triage(p)
+            predicted = result.get("final_esi", 3)
+            confidence = result.get("final_confidence", 0)
+            overrides = len(result.get("safety_overrides", []))
+        except Exception:
+            predicted = -1
+            confidence = 0
+            overrides = 0
+
+        is_exact = predicted == expected
+        is_within_1 = abs(predicted - expected) <= 1
+        diff = predicted - expected
+
+        if is_exact:
+            exact_matches += 1
+        if is_within_1:
+            within_1 += 1
+        if predicted > expected:
+            under_triage += 1
+        if predicted < expected:
+            over_triage += 1
+
+        esi_counts[expected]["total"] += 1
+        if is_exact:
+            esi_counts[expected]["correct"] += 1
+
+        per_patient.append({
+            "patient_id": p["patient_id"],
+            "name": p["name"],
+            "age": p["age"],
+            "sex": p["sex"],
+            "chief_complaint": p["chief_complaint"][:80],
+            "expected_esi": expected,
+            "predicted_esi": predicted,
+            "confidence": round(confidence, 4),
+            "is_exact_match": is_exact,
+            "is_within_1": is_within_1,
+            "difference": diff,
+            "safety_overrides": overrides,
+        })
+
+    exact_accuracy = round(exact_matches / max(total, 1) * 100, 1)
+    within_1_accuracy = round(within_1 / max(total, 1) * 100, 1)
+    under_triage_rate = round(under_triage / max(total, 1) * 100, 1)
+    over_triage_rate = round(over_triage / max(total, 1) * 100, 1)
+
+    per_esi_accuracy = {}
+    for esi, counts in esi_counts.items():
+        if counts["total"] > 0:
+            per_esi_accuracy[f"ESI-{esi}"] = {
+                "total": counts["total"],
+                "correct": counts["correct"],
+                "accuracy_pct": round(counts["correct"] / counts["total"] * 100, 1)
+            }
+
+    return {
+        "total_patients": total,
+        "exact_match_accuracy_pct": exact_accuracy,
+        "within_1_accuracy_pct": within_1_accuracy,
+        "under_triage_rate_pct": under_triage_rate,
+        "over_triage_rate_pct": over_triage_rate,
+        "exact_matches": exact_matches,
+        "within_1_matches": within_1,
+        "per_esi_accuracy": per_esi_accuracy,
+        "per_patient": per_patient,
+    }
+
+
 # ── Config Endpoints ─────────────────────────────────────────────────
 
 @app.get("/api/config")
