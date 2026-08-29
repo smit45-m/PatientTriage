@@ -1,5 +1,5 @@
 """Waiting Room Monitor"""
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 
 class WaitingRoomMonitor:
@@ -26,7 +26,7 @@ class WaitingRoomMonitor:
     def check_alerts(self, current_time=None) -> list[dict]:
         alerts = []
         if current_time is None:
-            current_time = datetime.utcnow()
+            current_time = datetime.now(timezone.utc)
         elif isinstance(current_time, str):
             current_time = datetime.fromisoformat(current_time.replace('Z', '+00:00'))
             

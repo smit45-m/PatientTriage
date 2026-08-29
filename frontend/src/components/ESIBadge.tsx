@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ESI_COLORS, ESI_LABELS } from '@/lib/constants';
 
 interface ESIBadgeProps {
-  esi: number;
+  esi?: number;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   pulse?: boolean;
@@ -19,7 +19,7 @@ const ESI_LIGHT_STYLES: Record<number, { bg: string; text: string; border: strin
 };
 
 export default function ESIBadge({
-  esi,
+  esi = 3,
   size = 'md',
   showLabel = true,
   pulse = false,

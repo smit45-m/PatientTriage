@@ -130,10 +130,22 @@ export default function DashboardHome() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Title & Heading */}
           <div className="lg:col-span-7 space-y-4">
-            <span className="text-xs font-bold tracking-widest text-slate-500 uppercase flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-purple-700" />
-              Main Clinical Objective
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold tracking-widest text-slate-500 uppercase flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-purple-700" />
+                Main Clinical Objective
+              </span>
+              <div className="w-20 h-5 text-rose-500 hidden sm:block">
+                <svg viewBox="0 0 100 24" className="w-full h-full stroke-current fill-none stroke-2">
+                  <path
+                    d="M0 12 L20 12 L26 3 L34 21 L42 6 L48 18 L54 12 L100 12"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="ecg-line"
+                  />
+                </svg>
+              </div>
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-[52px] font-black text-slate-900 leading-[1.15] tracking-tight">
               Structuring complex <br />
               <span className="text-purple-700">Emergency data</span> into a clean, <br />
