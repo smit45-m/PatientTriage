@@ -101,7 +101,7 @@ export default function PatientSidebar({ patients, selectedId, onSelect }: Patie
                     {patient.age}y / {patient.sex}
                   </span>
                 </div>
-                <ESIBadge esi={patient.expected_esi} size="sm" showLabel={false} />
+                <ESIBadge esi={patient.expected_esi || 3} size="sm" showLabel={false} />
               </div>
 
               <p className="text-[11px] text-slate-600 line-clamp-1 mb-2 font-medium">

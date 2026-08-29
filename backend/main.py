@@ -1,9 +1,13 @@
 """PatientTriage.ai — FastAPI Backend Server v2.0 with JWT Authentication"""
+import os
+import time
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
+
+_SERVER_START_TIME = time.time()
 
 from data.patients import get_all_patients, get_patient_by_id
 from agents.graph import run_triage
@@ -24,9 +28,11 @@ app = FastAPI(
     version=PIPELINE_VERSION,
 )
 
+# CORS — configurable via CORS_ORIGINS env var (comma-separated), defaults to permissive for dev
+_cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -372,6 +378,20 @@ def update_profile(req: ConfigProfileRequest):
         raise HTTPException(status_code=400, detail=f"Invalid profile. Choose from: {list(PROFILES.keys())}")
     set_profile(req.profile)
     return {"status": "success", "profile": req.profile}
+
+
+# ── Health Check Endpoint ────────────────────────────────────────────
+
+@app.get("/api/health")
+def health_check():
+    """Returns server health status, uptime, and pipeline version."""
+    uptime_seconds = round(time.time() - _SERVER_START_TIME, 1)
+    return {
+        "status": "healthy",
+        "pipeline_version": PIPELINE_VERSION,
+        "uptime_seconds": uptime_seconds,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 if __name__ == "__main__":

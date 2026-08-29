@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Cpu, ClipboardList, Brain, ShieldAlert, BookOpen, MonitorCheck,
-  CheckCircle2, Code, ArrowRight, Sparkles, ChevronRight
+  CheckCircle2, Code, ArrowRight, Sparkles, ChevronRight, Copy,
+  Check, Layers, GitBranch, ArrowLeft
 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 
@@ -12,9 +13,10 @@ const AGENT_SPECS = [
     step: '01',
     id: 'intake', name: 'Intake & Clinical Scoring', icon: ClipboardList, color: '#6d28d9',
     image: '/medical/ecg_monitor.jpg',
-    summary: 'Validates vital signs against age-stratified thresholds (pediatric / adult / geriatric) and calculates derived physiological scores.',
+    summary: 'Validates vital signs against age-stratified thresholds (pediatric / adult / geriatric) and calculates derived physiological scores (Shock Index, MEWS, MAP).',
     inputs: ['Heart Rate, Blood Pressure, SpO2, Respiratory Rate, Temperature, Pain Scale', 'Patient demographics (age, sex, arrival mode)'],
     outputs: ['Shock Index (HR/SBP)', 'Modified Early Warning Score (MEWS)', 'Mean Arterial Pressure (MAP)', 'Vital sign anomaly flags per age group'],
+    stateKeysAdded: ['derived_scores', 'vital_flags', 'thresholds', 'missing_data', 'age_group'],
     code: `def intake_agent(state: TriageState) -> dict:
     patient = state["patient"]
     vitals = patient["vitals"]
@@ -30,9 +32,10 @@ const AGENT_SPECS = [
     step: '02',
     id: 'ml_nlp', name: 'ML & NLP Prediction Fusion', icon: Brain, color: '#7c3aed',
     image: '/medical/triage_desk.jpg',
-    summary: 'Combines tabular ML (XGBoost on 13 features) with 5-tier NLP text analysis via weighted late fusion for ESI prediction.',
+    summary: 'Combines tabular ML (XGBoost on 13 features) with 5-tier NLP text analysis via weighted late fusion (0.65 tabular + 0.35 NLP text) for calibrated ESI prediction.',
     inputs: ['13 clinical features (vitals + derived scores)', 'Free-text chief complaint', 'Fusion weights: ML=0.65, NLP=0.35'],
     outputs: ['5-class ESI probability distribution', 'NLP urgency classification with keyword matching', 'Entropy-based confidence score with agreement bonus'],
+    stateKeysAdded: ['ml_score', 'nlp_extraction', 'fused_prediction'],
     code: `def ml_agent(state: TriageState) -> dict:
     features = build_feature_vector(state)
     ml_probs = xgb_model.predict_proba(features)
@@ -45,9 +48,10 @@ const AGENT_SPECS = [
     step: '03',
     id: 'safety', name: 'Clinical Safety Governance', icon: ShieldAlert, color: '#dc2626',
     image: '/medical/surgery_lights.jpg',
-    summary: 'Enforces 18 hard-coded safety rules with asymmetric loss (20x under-triage penalty) and confidence-based action governance.',
+    summary: 'Enforces 18 hard-coded safety rules with asymmetric loss (20x under-triage penalty) and confidence-based action governance (DECIDE vs ESCALATE vs RECOMMEND).',
     inputs: ['Fused prediction probabilities', 'Active vital sign flags (tachycardia, hypotension, etc.)', 'NLP semantic alerts (stroke, sepsis, cardiac arrest)'],
     outputs: ['Safety rule overrides (automatic ESI-1 for life threats)', 'Adjusted prediction with asymmetric bias', 'Action type: DECIDE / ESCALATE / RECOMMEND'],
+    stateKeysAdded: ['safety_overrides', 'adjusted_prediction', 'confidence_result', 'action_type'],
     code: `def safety_agent(state: TriageState) -> dict:
     overrides = safety_engine.evaluate(
         vitals=state["patient"]["vitals"],
@@ -63,9 +67,10 @@ const AGENT_SPECS = [
     step: '04',
     id: 'rag', name: 'RAG Clinical Explainer', icon: BookOpen, color: '#4f46e5',
     image: '/medical/doctor_tablet.jpg',
-    summary: 'Generates clinical rationale grounded in ESI Handbook v4, AHA, ASA, and Surviving Sepsis Campaign protocols.',
+    summary: 'Generates clinical rationale grounded in ESI Handbook v4, AHA, ASA, and Surviving Sepsis Campaign protocols with deterministic fallback.',
     inputs: ['Assigned ESI level and action type', 'Active protocols and safety overrides', 'Calculated vital narratives and severity markers'],
     outputs: ['Plain-English clinical rationale', 'Protocol-specific action checklist', 'Pediatric/geriatric special considerations'],
+    stateKeysAdded: ['rag_rationale', 'retrieved_guidelines', 'recommendations'],
     code: `def rag_agent(state: TriageState) -> dict:
     guidelines = retrieve_esi_guidelines(state["final_esi"])
     rationale = build_clinical_rationale(
@@ -80,14 +85,15 @@ const AGENT_SPECS = [
     step: '05',
     id: 'cockpit', name: 'Decision Cockpit & Audit', icon: MonitorCheck, color: '#059669',
     image: '/medical/emergency_bay.jpg',
-    summary: 'Determines hospital routing, computes feature importance via SHAP, and writes immutable audit records.',
+    summary: 'Determines hospital routing (Resuscitation Bay → Waiting Room), computes feature importance via SHAP, and writes immutable audit records.',
     inputs: ['Final ESI assignment', 'ML feature importance matrix', 'Clinician identification and session metadata'],
     outputs: ['Target routing (Resuscitation Bay → Waiting Room)', 'Top-5 SHAP feature attributions', 'Timestamped immutable audit log entry'],
+    stateKeysAdded: ['final_esi', 'final_confidence', 'routing', 'shap_values', 'audit_entry'],
     code: `def cockpit_agent(state: TriageState) -> dict:
     routing = ROUTING_MAP.get(state["final_esi"], "Waiting Room")
     audit_entry = {
         "event_id": str(uuid.uuid4()),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "patient_id": state["patient"]["patient_id"],
         "final_esi": state["final_esi"],
         "routing": routing
@@ -98,8 +104,15 @@ const AGENT_SPECS = [
 
 export default function PipelinePage() {
   const [activeIdx, setActiveIdx] = useState(0);
+  const [copied, setCopied] = useState(false);
   const active = AGENT_SPECS[activeIdx];
   const Icon = active.icon;
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(active.code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full space-y-8">
@@ -120,36 +133,38 @@ export default function PipelinePage() {
         </div>
       </div>
 
-      {/* Stage Selector (01 to 05) with Thumbnails */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        {AGENT_SPECS.map((node, i) => {
-          const NodeIcon = node.icon;
-          const isActive = activeIdx === i;
-          return (
-            <button
-              key={node.id}
-              onClick={() => setActiveIdx(i)}
-              className={`p-3.5 rounded-2xl text-left transition-all duration-200 border overflow-hidden relative group ${
-                isActive
-                  ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm ring-2 ring-purple-500/20'
-                  : 'bg-white border-slate-200/80 hover:border-purple-200 hover:bg-slate-50 shadow-card'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                  isActive ? 'bg-purple-700 text-white' : 'bg-slate-100 text-slate-600'
-                }`}>
-                  {node.step}
-                </span>
-                <NodeIcon className={`w-4 h-4 ${isActive ? 'text-purple-700' : 'text-slate-400'}`} />
-              </div>
-              <p className={`text-xs font-black truncate ${isActive ? 'text-purple-950' : 'text-slate-800'}`}>
-                {node.name.split(' & ')[0]}
-              </p>
-              <span className="text-[10px] text-slate-400 truncate block mt-0.5">Agent {i + 1}</span>
-            </button>
-          );
-        })}
+      {/* Stage Selector with Connecting SVG Progress Line */}
+      <div className="relative">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 relative z-10">
+          {AGENT_SPECS.map((node, i) => {
+            const NodeIcon = node.icon;
+            const isActive = activeIdx === i;
+            return (
+              <button
+                key={node.id}
+                onClick={() => setActiveIdx(i)}
+                className={`p-3.5 rounded-2xl text-left transition-all duration-200 border overflow-hidden relative group cursor-pointer ${
+                  isActive
+                    ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm ring-2 ring-purple-500/20'
+                    : 'bg-white border-slate-200/80 hover:border-purple-200 hover:bg-slate-50 shadow-card'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                    isActive ? 'bg-purple-700 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {node.step}
+                  </span>
+                  <NodeIcon className={`w-4 h-4 ${isActive ? 'text-purple-700' : 'text-slate-400'}`} />
+                </div>
+                <p className={`text-xs font-black truncate ${isActive ? 'text-purple-950' : 'text-slate-800'}`}>
+                  {node.name.split(' & ')[0]}
+                </p>
+                <span className="text-[10px] text-slate-400 truncate block mt-0.5">Agent {i + 1}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Detail Panel */}
@@ -164,16 +179,36 @@ export default function PipelinePage() {
         >
           {/* Left — Description + Image + I/O (7 cols) */}
           <div className="lg:col-span-7 bg-white rounded-3xl p-7 border border-slate-200/80 shadow-card space-y-5">
-            <div className="flex items-center gap-3.5 pb-4 border-b border-slate-100">
-              <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-purple-50 border border-purple-200">
-                <Icon className="w-5 h-5 text-purple-700" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-purple-700 bg-purple-100/70 px-2 py-0.5 rounded-md">Stage {active.step}</span>
-                  <h2 className="text-lg font-black text-slate-900">{active.name}</h2>
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-purple-50 border border-purple-200">
+                  <Icon className="w-5 h-5 text-purple-700" />
                 </div>
-                <span className="text-[11px] font-mono text-slate-400">backend/agents/{active.id}_agent.py</span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-purple-700 bg-purple-100/70 px-2 py-0.5 rounded-md">Stage {active.step}</span>
+                    <h2 className="text-lg font-black text-slate-900">{active.name}</h2>
+                  </div>
+                  <span className="text-[11px] font-mono text-slate-400">backend/agents/{active.id}_agent.py</span>
+                </div>
+              </div>
+
+              {/* Prev / Next Stage Buttons */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setActiveIdx((prev) => (prev > 0 ? prev - 1 : AGENT_SPECS.length - 1))}
+                  className="p-1.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                  title="Previous Agent"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setActiveIdx((prev) => (prev < AGENT_SPECS.length - 1 ? prev + 1 : 0))}
+                  className="p-1.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                  title="Next Agent"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
@@ -192,6 +227,21 @@ export default function PipelinePage() {
             </div>
 
             <p className="text-xs text-slate-600 font-medium leading-relaxed">{active.summary}</p>
+
+            {/* State Schema Keys Added Badge List */}
+            <div className="p-3.5 rounded-2xl bg-purple-50/50 border border-purple-100 space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-purple-900">
+                <Layers className="w-3.5 h-3.5 text-purple-700" />
+                State Dictionary Keys Populated by this Node
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {active.stateKeysAdded.map((key) => (
+                  <span key={key} className="px-2 py-0.5 rounded-md bg-white border border-purple-200 text-[10px] font-mono font-bold text-purple-800 shadow-xs">
+                    +{key}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2.5">
@@ -231,7 +281,16 @@ export default function PipelinePage() {
                 <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
                   <Code className="w-4 h-4 text-purple-700" /> Agent Implementation
                 </span>
-                <span className="text-[10px] font-mono text-purple-800 bg-purple-50 px-2 py-0.5 rounded-md font-bold">Python 3.11</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCopyCode}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold transition-colors cursor-pointer"
+                  >
+                    {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                  <span className="text-[10px] font-mono text-purple-800 bg-purple-50 px-2 py-0.5 rounded-md font-bold">Python 3.11</span>
+                </div>
               </div>
 
               <pre className="p-4 bg-slate-900 text-slate-100 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed shadow-inner">

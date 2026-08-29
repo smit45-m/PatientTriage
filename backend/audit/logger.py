@@ -1,7 +1,7 @@
 """Audit Logger"""
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 class AuditLogger:
     def __init__(self, log_file='audit_log.json'):
@@ -11,7 +11,7 @@ class AuditLogger:
             try:
                 with open(log_file, 'r') as f:
                     self.logs = json.load(f)
-            except:
+            except (json.JSONDecodeError, IOError):
                 pass
                 
     def _save(self):
@@ -22,13 +22,13 @@ class AuditLogger:
         entry = audit_entry.copy()
         entry['type'] = 'triage'
         if 'timestamp' not in entry:
-            entry['timestamp'] = datetime.utcnow().isoformat()
+            entry['timestamp'] = datetime.now(timezone.utc).isoformat()
         self.logs.append(entry)
         self._save()
         
     def log_override(self, patient_id, original_esi, new_esi, reason, nurse_id, timestamp=None):
         if timestamp is None:
-            timestamp = datetime.utcnow().isoformat()
+            timestamp = datetime.now(timezone.utc).isoformat()
         entry = {
             'type': 'override',
             'patient_id': patient_id,

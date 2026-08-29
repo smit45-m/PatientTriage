@@ -94,10 +94,15 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Heartbeat pulse waveform */}
-          <div className="w-24 h-8 text-rose-500/80">
-            <svg viewBox="0 0 100 30" className="w-full h-full stroke-current fill-none stroke-2">
-              <path d="M0 15 L20 15 L28 5 L36 25 L44 8 L52 20 L60 15 L100 15" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Heartbeat pulse waveform — with animated CSS stroke */}
+          <div className="w-32 h-10 text-rose-500">
+            <svg viewBox="0 0 120 30" className="w-full h-full stroke-current fill-none stroke-[2.5]">
+              <path
+                d="M0 15 L25 15 L32 4 L40 26 L48 8 L56 22 L64 15 L120 15"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ecg-line"
+              />
             </svg>
           </div>
 
@@ -154,7 +159,8 @@ export default function LoginPage() {
         <div className="lg:col-span-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={error ? { x: [-8, 8, -6, 6, -3, 3, 0], opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+            transition={{ duration: error ? 0.4 : 0.3 }}
             className="bg-[#101222]/90 backdrop-blur-2xl rounded-3xl p-8 border border-slate-800 shadow-2xl space-y-6 relative"
           >
             {/* Pill Badge */}
@@ -188,7 +194,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => handleQuickDemo(d)}
                       disabled={loading}
-                      className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/60 hover:bg-purple-950/30 transition-all text-left group flex flex-col items-center text-center"
+                      className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/60 hover:bg-purple-950/30 transition-all text-left group flex flex-col items-center text-center cursor-pointer"
                     >
                       <div className="w-8 h-8 rounded-full overflow-hidden mb-1 border border-slate-700 group-hover:border-purple-400">
                         <img src={d.avatar} alt={d.name} className="w-full h-full object-cover" />
@@ -278,7 +284,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -313,7 +319,7 @@ export default function LoginPage() {
                       setMode('register');
                       setError(null);
                     }}
-                    className="text-purple-400 font-bold hover:underline"
+                    className="text-purple-400 font-bold hover:underline cursor-pointer"
                   >
                     Create one free
                   </button>
@@ -327,7 +333,7 @@ export default function LoginPage() {
                       setMode('login');
                       setError(null);
                     }}
-                    className="text-purple-400 font-bold hover:underline"
+                    className="text-purple-400 font-bold hover:underline cursor-pointer"
                   >
                     Sign in here
                   </button>

@@ -25,8 +25,10 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+# Python virtualenv lib directories (root level only)
+/lib/
+/lib64/
+!frontend/src/lib/
 parts/
 sdist/
 var/
@@ -53,3 +55,9 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Runtime data files (generated at server startup)
+backend/audit_log.json
+backend/*_audit.json
+backend/audit_*_report.json
+

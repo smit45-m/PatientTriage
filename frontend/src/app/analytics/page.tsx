@@ -2,9 +2,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  BarChart3, Sparkles, Trophy, CheckCircle2, TrendingUp, Award,
+  BarChart3, Sparkles, Trophy, CheckCircle2, TrendingUp, Award, Info,
   Target, Loader2, AlertTriangle, ShieldCheck, Zap, XCircle
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import GlassCard from '@/components/GlassCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import ESIBadge from '@/components/ESIBadge';
@@ -29,7 +30,31 @@ const CONFUSION = [
   { actual: 'ESI-5', p1: 10, p2: 0, p3: 12, p4: 0, p5: 68 },
 ];
 
+// Data for Recharts bar comparison chart
+const COMPARISON_CHART_DATA = [
+  { metric: 'AUROC', ours: 0.8993, llm: 0.892 },
+  { metric: 'Critical\nAUROC', ours: 0.9884, llm: 0.924 },
+  { metric: 'ESI-1\nRecall', ours: 1.0, llm: 0.94 },
+  { metric: 'Safety\n(1-UTR)', ours: 0.998, llm: 0.941 },
+  { metric: 'No Halluc.\nRate', ours: 1.0, llm: 0.978 },
+];
+
+const CELL_KEYS = ['p1', 'p2', 'p3', 'p4', 'p5'] as const;
+const DIAGONAL_COLORS = ['bg-rose-100', 'bg-orange-100', 'bg-amber-100', 'bg-emerald-100', 'bg-blue-100'];
+const DIAGONAL_TEXT = ['text-rose-800', 'text-orange-800', 'text-amber-800', 'text-emerald-800', 'text-blue-800'];
+
+// Get heatmap intensity for off-diagonal cells
+function getHeatmapClass(value: number, isDiagonal: boolean, rowIdx: number) {
+  if (isDiagonal) return `${DIAGONAL_COLORS[rowIdx]} ${DIAGONAL_TEXT[rowIdx]} font-black`;
+  if (value === 0) return 'text-slate-300';
+  if (value <= 5) return 'text-slate-500 bg-slate-50';
+  if (value <= 20) return 'text-amber-700 bg-amber-50/60';
+  if (value <= 80) return 'text-orange-700 bg-orange-50/60';
+  return 'text-rose-700 bg-rose-50/60 font-bold';
+}
+
 export default function AnalyticsPage() {
+  const [hoveredCell, setHoveredCell] = useState<{ row: number; col: number } | null>(null);
   const [accuracyData, setAccuracyData] = useState<any>(null);
   const [accuracyLoading, setAccuracyLoading] = useState(false);
   const [accuracyError, setAccuracyError] = useState<string | null>(null);
@@ -259,6 +284,78 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
+      {/* NEW: Recharts Bar Chart — RAG vs LLM Visual Comparison */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard variant="elevated" className="!p-6 space-y-4">
+          <div>
+            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-purple-700" />
+              RAG Pipeline vs Raw LLM
+            </h3>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">Key clinical metrics comparison (higher is better)</p>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={COMPARISON_CHART_DATA} barCategoryGap="20%">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="metric" tick={{ fontSize: 10, fontWeight: 600, fill: '#64748b' }} interval={0} />
+                <YAxis domain={[0.85, 1.0]} tick={{ fontSize: 10, fill: '#94a3b8' }} tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 600 }}
+                  formatter={(value: number) => `${(value * 100).toFixed(2)}%`}
+                />
+                <Bar dataKey="ours" name="Our Pipeline" radius={[6, 6, 0, 0]}>
+                  {COMPARISON_CHART_DATA.map((_, idx) => (
+                    <Cell key={idx} fill={idx === 0 ? '#7e22ce' : idx === 1 ? '#6d28d9' : idx === 2 ? '#059669' : idx === 3 ? '#4338ca' : '#7c3aed'} />
+                  ))}
+                </Bar>
+                <Bar dataKey="llm" name="Raw LLM" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </GlassCard>
+
+        {/* NEW: Per-Class Accuracy Breakdown */}
+        <GlassCard variant="elevated" className="!p-6 space-y-4">
+          <div>
+            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-indigo-700" />
+              Per-Class Accuracy Breakdown
+            </h3>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">Correct predictions per ESI class (diagonal)</p>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: 'ESI-1', accuracy: 100, total: 200, color: '#ef4444' },
+                  { name: 'ESI-2', accuracy: 22.5, total: 360, color: '#f97316' },
+                  { name: 'ESI-3', accuracy: 74.3, total: 420, color: '#eab308' },
+                  { name: 'ESI-4', accuracy: 67.7, total: 130, color: '#10b981' },
+                  { name: 'ESI-5', accuracy: 75.6, total: 90, color: '#3b82f6' },
+                ]}
+                barCategoryGap="20%"
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 700, fill: '#334155' }} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} tickFormatter={(v: number) => `${v}%`} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 600 }}
+                  formatter={(value: any, _: any, item: any) => [`${Number(value).toFixed(1)}% (N=${item?.payload?.total ?? 0})`, 'Accuracy']}
+                />
+                <Bar dataKey="accuracy" radius={[8, 8, 0, 0]}>
+                  {[
+                    '#ef4444', '#f97316', '#eab308', '#10b981', '#3b82f6'
+                  ].map((color, idx) => (
+                    <Cell key={idx} fill={color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </GlassCard>
+      </div>
+
       {/* Head-to-Head Comparison Table */}
       <GlassCard variant="elevated" className="!p-0 overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -301,12 +398,12 @@ export default function AnalyticsPage() {
         </div>
       </GlassCard>
 
-      {/* Confusion Matrix */}
+      {/* Interactive Confusion Matrix Heatmap */}
       <GlassCard variant="elevated" className="!p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-black text-slate-900">5-Class Confusion Matrix (N=1,200)</h3>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">Intentional safe over-triage bias via 20x asymmetric loss penalty to protect high-risk patients.</p>
+            <h3 className="text-base font-black text-slate-900">5-Class Confusion Matrix Heatmap (N=1,200)</h3>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">Intentional safe over-triage bias via 20x asymmetric loss penalty to protect high-risk patients. Hover cells for details.</p>
           </div>
           <div className="p-2 rounded-2xl bg-purple-50 text-purple-700">
             <TrendingUp className="w-5 h-5" />
@@ -317,27 +414,61 @@ export default function AnalyticsPage() {
           <table className="w-full text-center text-xs font-mono">
             <thead className="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
               <tr>
-                <th className="p-3 text-left">Actual Class</th>
+                <th className="p-3 text-left font-sans">Actual Class</th>
                 <th className="p-3 text-rose-700 font-black">Pred ESI-1</th>
                 <th className="p-3 text-orange-700 font-black">Pred ESI-2</th>
                 <th className="p-3 text-amber-700 font-black">Pred ESI-3</th>
                 <th className="p-3 text-emerald-700 font-black">Pred ESI-4</th>
                 <th className="p-3 text-blue-700 font-black">Pred ESI-5</th>
+                <th className="p-3 text-slate-500 font-black font-sans">Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {CONFUSION.map((r, i) => (
-                <tr key={i} className="hover:bg-slate-50/50">
-                  <td className="p-3 text-left font-black text-slate-900 font-sans">{r.actual}</td>
-                  <td className={`p-3 ${i === 0 ? 'bg-rose-100/70 text-rose-800 font-black rounded-lg' : 'text-slate-400'}`}>{r.p1}</td>
-                  <td className={`p-3 ${i === 1 ? 'bg-orange-100/70 text-orange-800 font-black rounded-lg' : 'text-slate-400'}`}>{r.p2}</td>
-                  <td className={`p-3 ${i === 2 ? 'bg-amber-100/70 text-amber-800 font-black rounded-lg' : 'text-slate-400'}`}>{r.p3}</td>
-                  <td className={`p-3 ${i === 3 ? 'bg-emerald-100/70 text-emerald-800 font-black rounded-lg' : 'text-slate-400'}`}>{r.p4}</td>
-                  <td className={`p-3 ${i === 4 ? 'bg-blue-100/70 text-blue-800 font-black rounded-lg' : 'text-slate-400'}`}>{r.p5}</td>
-                </tr>
-              ))}
+              {CONFUSION.map((r, rowIdx) => {
+                const values = [r.p1, r.p2, r.p3, r.p4, r.p5];
+                const total = values.reduce((a, b) => a + b, 0);
+                return (
+                  <tr key={rowIdx} className="hover:bg-slate-50/50">
+                    <td className="p-3 text-left font-black text-slate-900 font-sans">{r.actual}</td>
+                    {values.map((val, colIdx) => {
+                      const isDiagonal = rowIdx === colIdx;
+                      const isHovered = hoveredCell?.row === rowIdx && hoveredCell?.col === colIdx;
+                      const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0';
+                      return (
+                        <td
+                          key={colIdx}
+                          className={`p-3 rounded-lg transition-all duration-200 cursor-default relative ${getHeatmapClass(val, isDiagonal, rowIdx)} ${isHovered ? 'ring-2 ring-purple-400 ring-offset-1' : ''}`}
+                          onMouseEnter={() => setHoveredCell({ row: rowIdx, col: colIdx })}
+                          onMouseLeave={() => setHoveredCell(null)}
+                        >
+                          <span className="relative z-10">{val}</span>
+                          {/* Tooltip on hover */}
+                          {isHovered && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 font-sans"
+                            >
+                              <span className="font-bold">{r.actual}</span> → <span className="font-bold">Pred ESI-{colIdx + 1}</span>: {val} ({pct}%)
+                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-slate-900 rotate-45" />
+                            </motion.div>
+                          )}
+                        </td>
+                      );
+                    })}
+                    <td className="p-3 font-bold text-slate-600 font-sans">{total}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-4 pt-2 text-[10px] text-slate-500 font-medium border-t border-slate-100">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-200" /> Diagonal = Correct</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-rose-50 border border-rose-200" /> Off-diagonal = Misclassification</span>
+          <span className="flex items-center gap-1"><Info className="w-3 h-3" /> Hover for percentages</span>
         </div>
       </GlassCard>
     </div>
