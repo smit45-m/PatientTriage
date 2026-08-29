@@ -72,13 +72,14 @@ class ClinicalNLPExtractor:
                 r'fixed.*pupil', r'barely\s*responsive', r'unconscious',
             ],
             'status_epilepticus': [
-                r'tonic.?clonic', r'seizure.*(>|\b(5|10|15|20)\s*min)',
-                r'continuous.*seizure', r'status\s*epilepticus',
+                r'tonic.?clonic', r'seizure\s*lasting\s*(>|\b(5|10|15|20)\s*min)',
+                r'continuous.*seizure', r'status\s*epilepticus', r'active.*seizure',
             ],
             'stroke': [
-                r'facial\s*droop', r'slurred\s*speech', r'sudden.*weakness',
+                r'facial\s*droop', r'sudden.*(arm|leg|side).*weakness',
                 r'hemipleg', r'hemipar', r'aphasia', r'loss\s*of\s*vision',
                 r'one.sided.*weakness', r'right.sided.*weakness', r'left.sided.*weakness',
+                r'dense.*weakness', r'acute\s*stroke',
             ],
             'sah': [
                 r'worst\s*(headache|pain)', r'thunderclap', r'neck\s*stiff',

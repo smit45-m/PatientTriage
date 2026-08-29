@@ -37,8 +37,8 @@ class AsymmetricAdjuster:
         adjustment_applied = False
         reason = 'No adjustment needed'
 
-        # If margin between top-2 is < 20%, prefer higher acuity (lower ESI number)
-        if (top1_prob - top2_prob) < 0.20:
+        # If margin between top-2 is < 10%, prefer higher acuity (lower ESI number)
+        if (top1_prob - top2_prob) < 0.10:
             if top2_esi < top1_esi:
                 adjusted_esi = top2_esi
                 adjustment_applied = True

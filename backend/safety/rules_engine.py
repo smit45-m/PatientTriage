@@ -35,14 +35,14 @@ class SafetyRulesEngine:
             
         # R005: Shock index critical
         if si is not None and si > self.thresholds.shock_index_critical:
-            triggered.append({'rule_id': 'R005', 'rule_name': 'Shock index critical', 'triggered_by': f'SI={si}', 'override_esi': 1, 'severity': 'critical', 'action': 'Evaluate for shock'})
+            triggered.append({'rule_id': 'R005', 'rule_name': 'Shock index critical', 'triggered_by': f'SI={si}', 'override_esi': 2, 'severity': 'high', 'action': 'Evaluate for shock'})
             
         # R006: MEWS critical
         if mews is not None and mews >= self.thresholds.mews_critical:
             triggered.append({'rule_id': 'R006', 'rule_name': 'MEWS critical', 'triggered_by': f'MEWS={mews}', 'override_esi': 2, 'severity': 'high', 'action': 'Physician review'})
             
-        # R007: MAP dangerously low
-        if map_val is not None and map_val < 65:
+        # R007: MAP dangerously low (age-stratified)
+        if map_val is not None and map_val < self.thresholds.map_low:
             triggered.append({'rule_id': 'R007', 'rule_name': 'MAP dangerously low', 'triggered_by': f'MAP={map_val}', 'override_esi': 1, 'severity': 'critical', 'action': 'Hemodynamic support'})
             
         # R008: Altered mental status + geriatric

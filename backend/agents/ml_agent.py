@@ -75,19 +75,19 @@ def ml_agent(state: dict) -> dict:
     # Map NLP urgency to ESI probability distribution (5 tiers)
     nlp_tier = nlp_result.get('urgency_level', 'non_urgent')
     if nlp_tier == 'critical':
-        nlp_probs = [0.88, 0.08, 0.02, 0.01, 0.01]
-        weight_nlp = 0.45
+        nlp_probs = [0.90, 0.07, 0.01, 0.01, 0.01]
+        weight_nlp = 0.50
     elif nlp_tier == 'high':
-        nlp_probs = [0.08, 0.74, 0.14, 0.02, 0.02]
-        weight_nlp = 0.38
+        nlp_probs = [0.05, 0.82, 0.10, 0.02, 0.01]
+        weight_nlp = 0.48
     elif nlp_tier == 'moderate':
-        nlp_probs = [0.02, 0.10, 0.72, 0.12, 0.04]
-        weight_nlp = 0.35
+        nlp_probs = [0.01, 0.08, 0.80, 0.09, 0.02]
+        weight_nlp = 0.45
     elif nlp_tier == 'minor':
-        nlp_probs = [0.01, 0.03, 0.12, 0.72, 0.12]
-        weight_nlp = 0.35
+        nlp_probs = [0.01, 0.02, 0.10, 0.78, 0.09]
+        weight_nlp = 0.40
     else:  # non_urgent
-        nlp_probs = [0.01, 0.01, 0.03, 0.15, 0.80]
+        nlp_probs = [0.01, 0.01, 0.02, 0.12, 0.84]
         weight_nlp = 0.35
 
     weight_ml = 1.0 - weight_nlp
