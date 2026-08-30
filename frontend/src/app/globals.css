@@ -7,53 +7,65 @@
     background-color: #F8F9FC;
     color: #0F172A;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer components {
-  /* Clean White Medical Card System */
+  /* ── Clean White Medical Card System ──────────────────────────────────── */
   .glass-card,
   .card-white {
-    @apply bg-white rounded-2xl border border-slate-200/80 transition-all duration-300;
-    box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.04), 0 4px 20px -4px rgba(109, 40, 217, 0.04);
+    @apply bg-white rounded-2xl border border-slate-200/70 transition-all duration-300 ease-out;
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.03),
+      0 4px 16px -2px rgba(15, 23, 42, 0.04),
+      0 2px 12px -2px rgba(109, 40, 217, 0.03);
   }
 
   .glass-card-hover {
-    @apply hover:border-purple-200 hover:-translate-y-0.5;
+    @apply hover:border-purple-200/80 hover:-translate-y-0.5;
   }
   .glass-card-hover:hover {
-    box-shadow: 0 12px 32px -4px rgba(109, 40, 217, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    box-shadow:
+      0 8px 28px -4px rgba(109, 40, 217, 0.1),
+      0 4px 12px -2px rgba(15, 23, 42, 0.05);
   }
 
   .glass {
-    @apply bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl;
-    box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.04);
+    @apply bg-white/90 backdrop-blur-xl border border-slate-200/60 rounded-2xl;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.03),
+      0 8px 32px -4px rgba(15, 23, 42, 0.06);
   }
 
   .glass-sm {
-    @apply bg-white border border-slate-200/70 rounded-xl;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+    @apply bg-white border border-slate-200/60 rounded-xl;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
   }
 
   .glass-lg {
-    @apply bg-white border border-slate-200 rounded-3xl;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    @apply bg-white border border-slate-200/50 rounded-3xl;
+    box-shadow:
+      0 1px 3px rgba(15, 23, 42, 0.02),
+      0 8px 24px -4px rgba(15, 23, 42, 0.05),
+      0 16px 48px -8px rgba(109, 40, 217, 0.04);
   }
 
-  /* Purple Highlight Text — matching the Behance heading style */
+  /* ── Gradient Text ───────────────────────────────────────────────────── */
   .gradient-text {
     @apply bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-800 bg-clip-text text-transparent;
   }
 
   .gradient-purple-cta {
     @apply bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white transition-all duration-200;
-    box-shadow: 0 4px 14px rgba(109, 40, 217, 0.25);
+    box-shadow: 0 4px 14px rgba(109, 40, 217, 0.2);
   }
   .gradient-purple-cta:hover {
-    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.35);
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.3);
   }
 
-  /* 3D Glossy Purple Sphere styling */
+  /* ── 3D Glossy Spheres ───────────────────────────────────────────────── */
   .sphere-3d-purple {
     background: radial-gradient(circle at 35% 30%, #a855f7 0%, #6d28d9 50%, #3b0764 100%);
     box-shadow: inset -6px -6px 12px rgba(0, 0, 0, 0.35), inset 4px 4px 10px rgba(255, 255, 255, 0.4), 0 16px 32px rgba(109, 40, 217, 0.3);
@@ -68,25 +80,41 @@
     background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e9d5ff 60%, #c084fc 100%);
     box-shadow: inset -4px -4px 8px rgba(109, 40, 217, 0.15), 0 12px 24px rgba(109, 40, 217, 0.12);
   }
+
+  /* ── Premium Section Entrance ────────────────────────────────────────── */
+  .section-enter {
+    @apply opacity-0 translate-y-4;
+    animation: sectionFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .section-enter-d1 { animation-delay: 0.08s; }
+  .section-enter-d2 { animation-delay: 0.16s; }
+  .section-enter-d3 { animation-delay: 0.24s; }
+  .section-enter-d4 { animation-delay: 0.32s; }
 }
 
-/* Light Theme Scrollbar */
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d1d5db;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #9ca3af;
 }
 
-/* ── NEW: ECG Heartbeat Waveform Animation ──────────────────────────────── */
+/* ── Section Entrance Animation ────────────────────────────────────────── */
+@keyframes sectionFadeIn {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── ECG Heartbeat Waveform Animation ──────────────────────────────────── */
 @keyframes ecg-trace {
   0% { stroke-dashoffset: 280; }
   100% { stroke-dashoffset: 0; }
@@ -101,7 +129,7 @@
   animation: ecg-trace-loop 2.4s ease-in-out infinite;
 }
 
-/* ── NEW: Critical ESI Pulse Glow ───────────────────────────────────────── */
+/* ── Critical ESI Pulse Glow ───────────────────────────────────────────── */
 @keyframes pulse-glow-red {
   0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
   50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
@@ -113,7 +141,7 @@
 .pulse-esi-1 { animation: pulse-glow-red 2s ease-in-out infinite; }
 .pulse-esi-2 { animation: pulse-glow-orange 2.5s ease-in-out infinite; }
 
-/* ── NEW: Pipeline Stage Progress Animation ─────────────────────────────── */
+/* ── Pipeline Stage Progress Animation ─────────────────────────────────── */
 @keyframes pipeline-fill {
   0% { width: 0%; }
   100% { width: 100%; }
@@ -125,7 +153,7 @@
   animation: pipeline-fill 0.4s ease-out forwards;
 }
 
-/* ── NEW: Shimmer Loading Skeleton ──────────────────────────────────────── */
+/* ── Shimmer Loading Skeleton ──────────────────────────────────────────── */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -137,18 +165,21 @@
   border-radius: 0.75rem;
 }
 
-/* ── NEW: Wait-Time Progress Bar Gradients ──────────────────────────────── */
+/* ── Wait-Time Progress Bar Gradients ──────────────────────────────────── */
 .wait-bar-safe {
   background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 9999px;
 }
 .wait-bar-warning {
   background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  border-radius: 9999px;
 }
 .wait-bar-danger {
   background: linear-gradient(90deg, #ef4444, #f87171);
+  border-radius: 9999px;
 }
 
-/* ── NEW: Surge Mode Pulsing Background ─────────────────────────────────── */
+/* ── Surge Mode Pulsing Background ─────────────────────────────────────── */
 @keyframes surge-pulse {
   0%, 100% { background-color: rgba(239, 68, 68, 0.05); }
   50% { background-color: rgba(239, 68, 68, 0.12); }
@@ -157,7 +188,7 @@
   animation: surge-pulse 2s ease-in-out infinite;
 }
 
-/* ── NEW: Animated Gradient Border (for premium cards) ──────────────────── */
+/* ── Animated Gradient Border (for premium cards) ──────────────────────── */
 @keyframes gradient-border-spin {
   0% { --angle: 0deg; }
   100% { --angle: 360deg; }
@@ -177,7 +208,7 @@
   animation: gradient-border-spin 3s linear infinite;
 }
 
-/* ── NEW: Smooth Entry Animations ───────────────────────────────────────── */
+/* ── Smooth Entry Animations ───────────────────────────────────────────── */
 @keyframes fade-in-up {
   0% { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
@@ -189,4 +220,3 @@
 .animate-delay-200 { animation-delay: 0.2s; }
 .animate-delay-300 { animation-delay: 0.3s; }
 .animate-delay-400 { animation-delay: 0.4s; }
-

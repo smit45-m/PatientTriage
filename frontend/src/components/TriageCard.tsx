@@ -1,14 +1,16 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Heart, Activity, Wind, Thermometer, Droplets, Gauge,
   Zap, ShieldAlert, CheckCircle2, AlertTriangle,
   RotateCcw, UserCheck, Stethoscope, Sparkles, BarChart2,
-  Clock, ArrowRight, Bed, ShieldCheck, Check
+  Clock, ArrowRight, Bed, ShieldCheck, Check,
+  ClipboardCopy, Printer, ChevronRight, FileText, MapPin, Timer
 } from 'lucide-react';
 import { Patient, TriageResult } from '@/lib/types';
 import { runTriage, submitOverride, confirmRoute } from '@/lib/api';
+import { ESI_LABELS } from '@/lib/constants';
 import VitalCard from './VitalCard';
 import ESIBadge from './ESIBadge';
 import ConfidenceGauge from './ConfidenceGauge';
@@ -18,9 +20,11 @@ import GlassCard from './GlassCard';
 interface TriageCardProps {
   patient: Patient;
   onTriageComplete?: (result: TriageResult) => void;
+  onNextPatient?: () => void;
+  onPatientRouted?: (patientId: string) => void;
 }
 
-export default function TriageCard({ patient, onTriageComplete }: TriageCardProps) {
+export default function TriageCard({ patient, onTriageComplete, onNextPatient, onPatientRouted }: TriageCardProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [currentStage, setCurrentStage] = useState(0);
   const [completedStages, setCompletedStages] = useState<number[]>([]);
@@ -31,6 +35,10 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
   const [overrideSubmitted, setOverrideSubmitted] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [routedSuccess, setRoutedSuccess] = useState<string | null>(null);
+  const [showHandoff, setShowHandoff] = useState(false);
+  const [routeTimestamp, setRouteTimestamp] = useState<string | null>(null);
+  const [copiedHandoff, setCopiedHandoff] = useState(false);
+  const handoffRef = useRef<HTMLDivElement>(null);
 
   const handleRunTriage = async () => {
     setIsRunning(true);
@@ -79,22 +87,107 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
     if (!result) return;
     setIsConfirming(true);
     try {
-      await confirmRoute({
+      const routeRes = await confirmRoute({
         patient_id: patient.patient_id,
         name: patient.name,
         final_esi: result.final_esi,
         target_bay: result.routing,
         nurse_id: 'RN-Sarah',
       });
+      const now = new Date();
+      setRouteTimestamp(now.toLocaleString('en-IN', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour12: true,
+      }));
       setRoutedSuccess(result.routing);
+      setShowHandoff(true);
+      if (onPatientRouted) onPatientRouted(patient.patient_id);
+      // Scroll to handoff panel after brief delay
       setTimeout(() => {
-        setRoutedSuccess(null);
-      }, 4000);
+        handoffRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     } catch (e) {
       console.error('Confirm route error:', e);
     } finally {
       setIsConfirming(false);
     }
+  };
+
+  // Build SBAR handoff text for clipboard
+  const buildHandoffText = (): string => {
+    if (!result) return '';
+    const lines = [
+      `═══ CLINICAL HANDOFF SUMMARY ═══`,
+      `Patient: ${patient.name} (${patient.patient_id})`,
+      `Demographics: ${patient.age}y / ${patient.sex} | Arrival: ${patient.arrival_mode}`,
+      `Routed: ${routeTimestamp || new Date().toLocaleString()}`,
+      ``,
+      `── SITUATION ──`,
+      `Chief Complaint: "${patient.chief_complaint}"`,
+      `ESI Level: ${result.final_esi} — ${ESI_LABELS[result.final_esi] || 'Unknown'}`,
+      `AI Confidence: ${(result.final_confidence * 100).toFixed(1)}%`,
+      `Action Type: ${result.action_type}`,
+      `Target Department: ${result.routing}`,
+      ``,
+      `── BACKGROUND ──`,
+      `HR: ${patient.vitals.hr} bpm | BP: ${patient.vitals.sbp}/${patient.vitals.dbp} mmHg`,
+      `SpO2: ${patient.vitals.spo2}% | RR: ${patient.vitals.rr}/min | Temp: ${patient.vitals.temp}°C | Pain: ${patient.vitals.pain ?? 'N/A'}/10`,
+      result.derived_scores ? `Shock Index: ${result.derived_scores.shock_index?.toFixed(2) ?? 'N/A'} | MEWS: ${result.derived_scores.mews ?? 'N/A'} | MAP: ${result.derived_scores.map?.toFixed(1) ?? 'N/A'} mmHg` : '',
+      patient.medical_history?.length > 0 ? `History: ${patient.medical_history.join(', ')}` : '',
+      patient.medications?.length > 0 ? `Medications: ${patient.medications.join(', ')}` : '',
+      patient.allergies?.length > 0 ? `Allergies: ${patient.allergies.join(', ')}` : '',
+      ``,
+      `── ASSESSMENT ──`,
+      result.safety_overrides?.length > 0 ? `⚠ Safety Overrides: ${result.safety_overrides.map(o => o.rule_name).join(', ')}` : 'No safety overrides triggered.',
+      ``,
+      `── RECOMMENDATION ──`,
+      ...(result.recommendations || []).map(r => `• ${r}`),
+      ``,
+      `── CLINICAL RATIONALE ──`,
+      result.rag_rationale || 'N/A',
+    ].filter(Boolean);
+    return lines.join('\n');
+  };
+
+  const handleCopyHandoff = async () => {
+    try {
+      await navigator.clipboard.writeText(buildHandoffText());
+      setCopiedHandoff(true);
+      setTimeout(() => setCopiedHandoff(false), 2000);
+    } catch {
+      console.error('Failed to copy handoff');
+    }
+  };
+
+  const handlePrintHandoff = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <html><head><title>Handoff — ${patient.name}</title>
+      <style>body{font-family:system-ui,sans-serif;padding:40px;font-size:13px;line-height:1.6;color:#1e293b}
+      h1{font-size:18px;margin-bottom:4px}h2{font-size:14px;color:#6d28d9;margin-top:20px;border-bottom:1px solid #e2e8f0;padding-bottom:4px}
+      .meta{color:#64748b;font-size:12px}.badge{display:inline-block;background:#f3e8ff;color:#6d28d9;padding:2px 10px;border-radius:12px;font-weight:700;font-size:13px}
+      table{width:100%;border-collapse:collapse;margin:8px 0}td{padding:4px 8px;border:1px solid #e2e8f0;font-size:12px}
+      .footer{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8}</style></head><body>
+      <h1>Clinical Handoff Summary</h1>
+      <p class="meta">${patient.name} (${patient.patient_id}) — ${patient.age}y / ${patient.sex} — Routed ${routeTimestamp}</p>
+      <span class="badge">ESI-${result.final_esi} ${ESI_LABELS[result.final_esi]}</span> → <strong>${result.routing}</strong>
+      <h2>Situation</h2><p>${patient.chief_complaint}</p>
+      <h2>Background — Vitals</h2>
+      <table><tr><td><strong>HR</strong> ${patient.vitals.hr} bpm</td><td><strong>BP</strong> ${patient.vitals.sbp}/${patient.vitals.dbp}</td><td><strong>SpO2</strong> ${patient.vitals.spo2}%</td></tr>
+      <tr><td><strong>RR</strong> ${patient.vitals.rr}/min</td><td><strong>Temp</strong> ${patient.vitals.temp}°C</td><td><strong>Pain</strong> ${patient.vitals.pain ?? 'N/A'}/10</td></tr></table>
+      ${patient.medical_history?.length ? `<p><strong>History:</strong> ${patient.medical_history.join(', ')}</p>` : ''}
+      ${patient.allergies?.length ? `<p><strong>Allergies:</strong> ${patient.allergies.join(', ')}</p>` : ''}
+      <h2>Assessment</h2><p>AI Confidence: ${(result.final_confidence * 100).toFixed(1)}% | Action: ${result.action_type}</p>
+      ${result.safety_overrides?.length > 0 ? `<p style="color:#dc2626"><strong>⚠ Safety Overrides:</strong> ${result.safety_overrides.map(o => o.rule_name).join(', ')}</p>` : ''}
+      <h2>Recommendation</h2><ul>${(result.recommendations || []).map(r => `<li>${r}</li>`).join('')}</ul>
+      <h2>Clinical Rationale</h2><p>${result.rag_rationale}</p>
+      <div class="footer">Generated by PatientTriage.ai — ${routeTimestamp} — Immutable audit record logged</div>
+      </body></html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   const getVitalStatus = (name: string, value: number): 'normal' | 'warning' | 'critical' => {
@@ -433,15 +526,231 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
         </GlassCard>
       )}
 
+      {/* ═══ Post-Routing Handoff Summary ═══ */}
+      <AnimatePresence>
+        {showHandoff && result && (
+          <motion.div
+            ref={handoffRef}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <GlassCard variant="elevated" className="!p-0 overflow-hidden border-emerald-200/60">
+              {/* Success Banner */}
+              <div className="bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                      <CheckCircle2 className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-black text-white tracking-tight">Patient Routed Successfully</h3>
+                      <p className="text-emerald-100 text-xs font-medium mt-0.5 flex items-center gap-2">
+                        <Clock className="w-3 h-3" />
+                        {routeTimestamp}
+                        <span className="text-emerald-200/60">•</span>
+                        Audit record logged
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleCopyHandoff}
+                      className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-all border border-white/10 cursor-pointer backdrop-blur-sm"
+                    >
+                      {copiedHandoff ? <Check className="w-3.5 h-3.5" /> : <ClipboardCopy className="w-3.5 h-3.5" />}
+                      {copiedHandoff ? 'Copied!' : 'Copy'}
+                    </button>
+                    <button
+                      onClick={handlePrintHandoff}
+                      className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-all border border-white/10 cursor-pointer backdrop-blur-sm"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      Print
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-6 py-5 space-y-5">
+                {/* Routing Summary Strip */}
+                <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-purple-100 border border-purple-200/80 flex items-center justify-center">
+                        <FileText className="w-4 h-4 text-purple-700" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-black text-slate-900">{patient.name}</span>
+                        <span className="text-[10px] text-slate-400 ml-2 font-mono">{patient.patient_id}</span>
+                        <p className="text-[10px] text-slate-500 font-medium">{patient.age}y / {patient.sex} • {patient.arrival_mode}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <ESIBadge esi={result.final_esi} size="md" />
+                    <ArrowRight className="w-4 h-4 text-slate-300" />
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-xs font-black text-emerald-800">{result.routing}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SBAR Clinical Handoff Sections */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* S — Situation */}
+                  <div className="p-4 rounded-2xl bg-purple-50/50 border border-purple-200/60 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-purple-600 text-white text-[10px] font-black flex items-center justify-center">S</span>
+                      <span className="text-[11px] font-black uppercase tracking-wider text-purple-800">Situation</span>
+                    </div>
+                    <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                      <strong className="text-slate-900">{patient.name}</strong>, {patient.age}y {patient.sex}, presenting with{' '}
+                      <em className="text-purple-700">&quot;{patient.chief_complaint}&quot;</em>.
+                      Classified as <strong className="text-slate-900">ESI-{result.final_esi} ({ESI_LABELS[result.final_esi]})</strong> with{' '}
+                      <strong>{(result.final_confidence * 100).toFixed(0)}% confidence</strong>.
+                      Action type: <strong>{result.action_type}</strong>.
+                    </p>
+                  </div>
+
+                  {/* B — Background */}
+                  <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-200/60 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-blue-600 text-white text-[10px] font-black flex items-center justify-center">B</span>
+                      <span className="text-[11px] font-black uppercase tracking-wider text-blue-800">Background</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {[
+                        { label: 'HR', value: `${patient.vitals.hr} bpm` },
+                        { label: 'BP', value: `${patient.vitals.sbp}/${patient.vitals.dbp}` },
+                        { label: 'SpO2', value: `${patient.vitals.spo2}%` },
+                        { label: 'RR', value: `${patient.vitals.rr}/min` },
+                        { label: 'Temp', value: `${patient.vitals.temp}°C` },
+                        { label: 'Pain', value: `${patient.vitals.pain ?? 'N/A'}/10` },
+                      ].map(v => (
+                        <div key={v.label} className="text-[10px] font-mono bg-white rounded-lg px-2 py-1 border border-slate-200/60">
+                          <span className="text-slate-400">{v.label}:</span>{' '}
+                          <strong className="text-slate-800">{v.value}</strong>
+                        </div>
+                      ))}
+                    </div>
+                    {patient.medical_history?.length > 0 && (
+                      <p className="text-[10px] text-slate-600 font-medium mt-1">
+                        <strong className="text-slate-700">History:</strong> {patient.medical_history.join(', ')}
+                      </p>
+                    )}
+                    {patient.allergies?.length > 0 && (
+                      <p className="text-[10px] text-rose-600 font-bold mt-0.5">
+                        ⚠ Allergies: {patient.allergies.join(', ')}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* A — Assessment */}
+                  <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/60 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-amber-600 text-white text-[10px] font-black flex items-center justify-center">A</span>
+                      <span className="text-[11px] font-black uppercase tracking-wider text-amber-800">Assessment</span>
+                    </div>
+                    {result.derived_scores && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {result.derived_scores.shock_index !== null && (
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${
+                            (result.derived_scores.shock_index ?? 0) >= 0.9
+                              ? 'bg-rose-50 border-rose-200 text-rose-700'
+                              : 'bg-white border-slate-200 text-slate-700'
+                          }`}>
+                            SI: {result.derived_scores.shock_index?.toFixed(2)}
+                          </span>
+                        )}
+                        {result.derived_scores.mews !== null && (
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${
+                            (result.derived_scores.mews ?? 0) >= 4
+                              ? 'bg-rose-50 border-rose-200 text-rose-700'
+                              : 'bg-white border-slate-200 text-slate-700'
+                          }`}>
+                            MEWS: {result.derived_scores.mews}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {result.safety_overrides?.length > 0 ? (
+                      <div className="space-y-1">
+                        {result.safety_overrides.map((rule, idx) => (
+                          <p key={idx} className="text-[10px] text-rose-700 font-semibold flex items-start gap-1">
+                            <ShieldAlert className="w-3 h-3 shrink-0 mt-0.5" />
+                            <span><strong>[{rule.rule_id}]</strong> {rule.rule_name}</span>
+                          </p>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[10px] text-emerald-700 font-medium flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3" /> No safety overrides triggered
+                      </p>
+                    )}
+                  </div>
+
+                  {/* R — Recommendation */}
+                  <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/60 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center">R</span>
+                      <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800">Recommendation</span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(result.recommendations || []).map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-700 font-medium">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions Footer */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center gap-2 text-[10px] text-slate-400 font-medium">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    Immutable audit entry recorded • Governance trail active
+                  </div>
+
+                  {onNextPatient && (
+                    <motion.button
+                      whileHover={{ scale: 1.02, x: 2 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        setShowHandoff(false);
+                        setRoutedSuccess(null);
+                        setResult(null);
+                        setCompletedStages([]);
+                        setCurrentStage(0);
+                        onNextPatient();
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white text-xs font-bold shadow-purple-sm hover:shadow-purple-md flex items-center gap-2 transition-all cursor-pointer"
+                    >
+                      Next Patient
+                      <ChevronRight className="w-4 h-4" />
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Override Modal */}
       <AnimatePresence>
         {isOverrideOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
             <motion.div
-              initial={{ scale: 0.94, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.94, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl border border-slate-200"
+              initial={{ scale: 0.96, opacity: 0, y: 8 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0, y: 8 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-glass-hover border border-slate-200/80"
             >
               <h3 className="text-lg font-black text-slate-900">Manual Clinical Override</h3>
               <p className="text-xs text-slate-500">Record a doctor-authorized acuity level change with clinical justification into the governance audit trail.</p>
@@ -471,13 +780,13 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
                   placeholder="State physician rationale for acuity change..."
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:shadow-input-focus transition-all"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   onClick={() => setIsOverrideOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -486,7 +795,7 @@ export default function TriageCard({ patient, onTriageComplete }: TriageCardProp
                   whileTap={{ scale: 0.98 }}
                   onClick={handleOverrideSubmit}
                   disabled={overrideSubmitted || !overrideReason.trim()}
-                  className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-purple-sm disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-purple-sm disabled:opacity-50 transition-all cursor-pointer"
                 >
                   {overrideSubmitted ? '✓ Logged to Audit' : 'Confirm Override'}
                 </motion.button>

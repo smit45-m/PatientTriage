@@ -34,14 +34,14 @@ export default function ParticleBackground() {
     window.addEventListener('resize', handleResize);
 
     const colors = ['#7c3aed', '#6366f1', '#a855f7', '#4338ca', '#818cf8'];
-    const particleCount = 35;
+    const particleCount = 25;
     const particles: Particle[] = [];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: Math.random() * 2 + 1,
+        radius: Math.random() * 2 + 1.5,
         color: colors[Math.floor(Math.random() * colors.length)],
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
@@ -109,7 +109,7 @@ export default function ParticleBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.7 }}
+      style={{ opacity: 0.5 }}
     />
   );
 }

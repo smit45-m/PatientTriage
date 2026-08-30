@@ -29,16 +29,16 @@ export default function ESIBadge({
   const label = ESI_LABELS[esi] || `Level ${esi}`;
 
   const sizeStyles = {
-    sm: 'px-2.5 py-0.5 text-[10px] gap-1.5 font-bold',
-    md: 'px-3 py-1 text-xs gap-2 font-bold',
-    lg: 'px-4 py-1.5 text-sm gap-2.5 font-extrabold',
+    sm: 'px-2.5 py-0.5 text-[10px] gap-1.5 font-semibold',
+    md: 'px-3 py-1 text-xs gap-2 font-semibold',
+    lg: 'px-4 py-1.5 text-sm gap-2.5 font-semibold',
   }[size];
 
   return (
     <motion.span
       initial={{ scale: 0.92, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className={`inline-flex items-center rounded-full border ${styles.bg} ${styles.text} ${styles.border} ${sizeStyles} ${className} shadow-xs`}
+      className={`inline-flex items-center rounded-full border ${styles.bg} ${styles.text} ${styles.border} ${sizeStyles} ${className} shadow-sm`}
     >
       <span
         className={`w-2 h-2 rounded-full ${styles.dot} ${pulse ? 'animate-ping' : ''}`}

@@ -45,7 +45,7 @@ export default function PatientSidebar({ patients, selectedId, onSelect }: Patie
             placeholder="Search by name, ID, symptoms..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all"
+            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 focus:shadow-input-focus transition-all"
           />
         </div>
 
@@ -90,7 +90,7 @@ export default function PatientSidebar({ patients, selectedId, onSelect }: Patie
               onClick={() => onSelect(patient.patient_id)}
               className={`p-3 rounded-2xl cursor-pointer transition-all duration-200 border ${
                 isSelected
-                  ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm ring-1 ring-purple-400/30'
+                  ? 'bg-purple-50/90 border-purple-300 border-l-[3px] border-l-purple-500 shadow-sm ring-1 ring-purple-400/30'
                   : 'bg-white border-slate-200/70 hover:border-purple-200 hover:bg-slate-50/70 hover:shadow-xs'
               }`}
             >

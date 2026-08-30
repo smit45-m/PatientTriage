@@ -23,7 +23,7 @@ export default function VitalCard({
   const statusConfig = {
     normal: {
       bg: 'bg-white',
-      border: 'border-slate-200/80',
+      border: 'border-slate-200/80 border-l-[3px] border-l-emerald-500',
       iconBg: 'bg-emerald-50 border border-emerald-200/60',
       iconColor: 'text-emerald-700',
       valueColor: 'text-slate-900',
@@ -32,7 +32,7 @@ export default function VitalCard({
     },
     warning: {
       bg: 'bg-amber-50/40',
-      border: 'border-amber-200',
+      border: 'border-amber-200 border-l-[3px] border-l-amber-500',
       iconBg: 'bg-amber-100/70 border border-amber-300/60',
       iconColor: 'text-amber-800',
       valueColor: 'text-amber-950',
@@ -41,7 +41,7 @@ export default function VitalCard({
     },
     critical: {
       bg: 'bg-rose-50/50',
-      border: 'border-rose-300',
+      border: 'border-rose-300 border-l-[3px] border-l-rose-500',
       iconBg: 'bg-rose-100 border border-rose-300/80',
       iconColor: 'text-rose-700',
       valueColor: 'text-rose-950',
