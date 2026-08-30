@@ -1,19 +1,50 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Stethoscope, Shield, HeartPulse, Cpu, Activity, Github,
   Award, CheckCircle2, Globe, ExternalLink, Sparkles
 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Footer() {
+  const { isAuthenticated } = useAuth();
+  const pathname = usePathname();
+
+  if (!isAuthenticated || pathname === '/login') {
+    return (
+      <footer className="w-full bg-[#0B0F19] text-slate-400 border-t border-slate-800/80 relative z-20 py-6 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-purple-900/60 border border-purple-700/50 flex items-center justify-center text-purple-300">
+              <Stethoscope className="w-3.5 h-3.5" />
+            </div>
+            <span>
+              © 2026 <strong className="text-slate-200">PatientTriage.ai</strong> — Accenture Innovation Challenge 2026.
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px]">
+            <span>Problem Statement 2</span>
+            <span className="text-slate-600">•</span>
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Emergency Services Active
+            </span>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="w-full bg-[#0B0F19] text-slate-300 border-t border-slate-800/80 relative z-20 mt-20">
+      <div className="h-px bg-gradient-to-r from-transparent via-purple-200 to-transparent" />
       <div className="max-w-7xl mx-auto px-6 py-14 lg:py-16">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
           {/* Brand & Mission Column (4 cols) */}
           <div className="lg:col-span-4 space-y-5">
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href={isAuthenticated ? "/overview" : "/"} className="flex items-center gap-3 group">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-800 flex items-center justify-center shadow-purple-sm text-white">
                 <Stethoscope className="w-5 h-5" />
               </div>
@@ -48,27 +79,27 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs font-medium">
               <li>
-                <Link href="/triage" className="text-slate-400 hover:text-purple-300 transition-colors">
+                <Link href="/triage" className="text-slate-400 hover:text-purple-400 transition-colors">
                   AI Triage Cockpit
                 </Link>
               </li>
               <li>
-                <Link href="/pipeline" className="text-slate-400 hover:text-purple-300 transition-colors">
+                <Link href="/pipeline" className="text-slate-400 hover:text-purple-400 transition-colors">
                   LangGraph Agent Graph
                 </Link>
               </li>
               <li>
-                <Link href="/monitor" className="text-slate-400 hover:text-purple-300 transition-colors">
+                <Link href="/monitor" className="text-slate-400 hover:text-purple-400 transition-colors">
                   Waiting Room Monitor
                 </Link>
               </li>
               <li>
-                <Link href="/audit" className="text-slate-400 hover:text-purple-300 transition-colors">
+                <Link href="/audit" className="text-slate-400 hover:text-purple-400 transition-colors">
                   Governance Audit Trail
                 </Link>
               </li>
               <li>
-                <Link href="/analytics" className="text-slate-400 hover:text-purple-300 transition-colors">
+                <Link href="/analytics" className="text-slate-400 hover:text-purple-400 transition-colors">
                   Clinical Benchmarks
                 </Link>
               </li>
@@ -81,19 +112,19 @@ export default function Footer() {
               Clinical Protocols
             </h4>
             <ul className="space-y-2.5 text-xs font-medium text-slate-400">
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 ESI Handbook v4
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 AHA Resuscitation
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 Surviving Sepsis
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 MEWS Scoring Engine
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 Shock Index Telemetry
               </li>
             </ul>
@@ -105,19 +136,19 @@ export default function Footer() {
               Safety Architecture
             </h4>
             <ul className="space-y-2.5 text-xs font-medium text-slate-400">
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 18 Red-Flag Rules
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 20x Asymmetric Penalty
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 100% ESI-1 Sensitivity
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 Physician Override Log
               </li>
-              <li className="hover:text-purple-300 transition-colors cursor-default">
+              <li className="hover:text-purple-400 transition-colors cursor-default">
                 Zero Missed Life Threats
               </li>
             </ul>
@@ -134,21 +165,21 @@ export default function Footer() {
                   href="https://github.com/smit45-m/PatientTriage"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-purple-300 transition-colors inline-flex items-center gap-1"
+                  className="text-slate-400 hover:text-purple-400 transition-colors inline-flex items-center gap-1"
                 >
                   <Github className="w-3.5 h-3.5" /> GitHub Repository
                 </a>
               </li>
-              <li className="text-slate-400 hover:text-purple-300 transition-colors cursor-default">
+              <li className="text-slate-400 hover:text-purple-400 transition-colors cursor-default">
                 1,200 Patient Cohort
               </li>
-              <li className="text-slate-400 hover:text-purple-300 transition-colors cursor-default">
+              <li className="text-slate-400 hover:text-purple-400 transition-colors cursor-default">
                 Problem Statement 2
               </li>
-              <li className="text-slate-400 hover:text-purple-300 transition-colors cursor-default">
+              <li className="text-slate-400 hover:text-purple-400 transition-colors cursor-default">
                 FastAPI + Next.js 14
               </li>
-              <li className="text-slate-400 hover:text-purple-300 transition-colors cursor-default">
+              <li className="text-slate-400 hover:text-purple-400 transition-colors cursor-default">
                 AIIMS / Apollo Rules
               </li>
             </ul>

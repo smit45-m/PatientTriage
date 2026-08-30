@@ -32,15 +32,15 @@ export default function GlassCard({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.25, delay, ease: [0.22, 1, 0.36, 1] }}
       whileHover={
         hoverEffect || onClick
-          ? { y: -2, boxShadow: '0 14px 30px -4px rgba(109, 40, 217, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04)' }
+          ? { y: -2 }
           : undefined
       }
       whileTap={onClick ? { scale: 0.98 } : undefined}
       onClick={onClick}
-      className={`${variants[variant]} ${hoverEffect || onClick ? 'cursor-pointer transition-all duration-200' : ''} p-5 ${className}`}
+      className={`${variants[variant]} ${hoverEffect || onClick ? 'cursor-pointer transition-all duration-300 hover:shadow-card-hover' : ''} p-5 ${className}`}
       {...props}
     >
       {children}

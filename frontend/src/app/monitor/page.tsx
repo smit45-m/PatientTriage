@@ -126,7 +126,7 @@ export default function MonitorPage() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <GlassCard className="!p-5 space-y-2">
+        <GlassCard className="!p-5 space-y-2 border-t-[3px] border-t-purple-500">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Waiting</span>
             <div className="p-2 rounded-xl bg-purple-50 text-purple-700">
@@ -137,7 +137,7 @@ export default function MonitorPage() {
           <span className="text-[10px] text-slate-400 font-medium">Patients enqueued</span>
         </GlassCard>
 
-        <GlassCard className="!p-5 space-y-2">
+        <GlassCard className="!p-5 space-y-2 border-t-[3px] border-t-red-500">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">High Acuity (ESI 1-2)</span>
             <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
@@ -150,7 +150,7 @@ export default function MonitorPage() {
           <span className="text-[10px] text-rose-500 font-bold">Immediate attention required</span>
         </GlassCard>
 
-        <GlassCard className="!p-5 space-y-2">
+        <GlassCard className="!p-5 space-y-2 border-t-[3px] border-t-amber-500">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Threshold Breaches</span>
             <div className={`p-2 rounded-xl ${hasBreach ? 'bg-rose-50 text-rose-600 pulse-esi-1' : 'bg-amber-50 text-amber-600'}`}>
@@ -165,7 +165,7 @@ export default function MonitorPage() {
           </span>
         </GlassCard>
 
-        <GlassCard className="!p-5 space-y-2">
+        <GlassCard className="!p-5 space-y-2 border-t-[3px] border-t-blue-500">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Avg Wait Time</span>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">

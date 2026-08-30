@@ -37,6 +37,7 @@ export default function ConfidenceGauge({ value }: { value: number }) {
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{ filter: `drop-shadow(0 0 4px ${strokeColor}4D)` }}
         />
       </svg>
 

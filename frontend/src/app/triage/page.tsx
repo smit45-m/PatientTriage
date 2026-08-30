@@ -70,7 +70,18 @@ export default function TriagePage() {
           {/* Right Column: Triage Detail & Execution Cockpit (8 cols) */}
           <div className="lg:col-span-8 h-full overflow-hidden">
             {selectedPatient ? (
-              <TriageCard patient={selectedPatient} />
+              <TriageCard
+                patient={selectedPatient}
+                onNextPatient={() => {
+                  const currentIndex = patients.findIndex(p => p.patient_id === selectedId);
+                  const nextIndex = (currentIndex + 1) % patients.length;
+                  setSelectedId(patients[nextIndex].patient_id);
+                }}
+                onPatientRouted={(patientId) => {
+                  // Future: could remove routed patient from queue
+                  console.log(`Patient ${patientId} routed and audit logged.`);
+                }}
+              />
             ) : (
               <div className="h-full flex items-center justify-center bg-white rounded-3xl border border-slate-200 shadow-card text-slate-400 text-sm font-medium">
                 Select a patient from the active queue on the left to begin AI triage.

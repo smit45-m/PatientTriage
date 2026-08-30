@@ -227,7 +227,7 @@ export default function AuditPage() {
                   <React.Fragment key={eventId + idx}>
                     <tr
                       onClick={() => toggleRow(eventId)}
-                      className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                      className="hover:bg-slate-50/80 transition-colors duration-150 cursor-pointer"
                     >
                       <td className="p-4 font-mono">
                         <span className="text-slate-800 font-bold">{eventId.slice(0, 16)}</span>

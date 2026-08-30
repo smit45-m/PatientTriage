@@ -41,11 +41,17 @@ const config: Config = {
         },
       },
       boxShadow: {
-        card: '0 2px 12px -2px rgba(15, 23, 42, 0.04), 0 4px 20px -4px rgba(109, 40, 217, 0.04)',
-        'card-hover': '0 12px 32px -4px rgba(109, 40, 217, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04)',
-        'purple-sm': '0 2px 8px rgba(109, 40, 217, 0.15)',
-        'purple-md': '0 8px 24px rgba(109, 40, 217, 0.22)',
-        'purple-lg': '0 16px 40px rgba(109, 40, 217, 0.28)',
+        card: '0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 2px 12px -2px rgba(109, 40, 217, 0.03)',
+        'card-hover': '0 8px 28px -4px rgba(109, 40, 217, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05)',
+        'purple-sm': '0 2px 8px rgba(109, 40, 217, 0.12)',
+        'purple-md': '0 6px 20px rgba(109, 40, 217, 0.16)',
+        'purple-lg': '0 12px 36px rgba(109, 40, 217, 0.2)',
+        'glass': '0 1px 2px rgba(15, 23, 42, 0.03), 0 8px 32px -4px rgba(15, 23, 42, 0.06)',
+        'glass-hover': '0 12px 40px -8px rgba(15, 23, 42, 0.08), 0 4px 16px -4px rgba(109, 40, 217, 0.06)',
+        'input-focus': '0 0 0 3px rgba(109, 40, 217, 0.08)',
+      },
+      transitionTimingFunction: {
+        'premium': 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

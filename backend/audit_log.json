@@ -3001,5 +3001,479 @@
     "rationale": "This 19-year-old M presenting with \"Found unresponsive, empty pill bottles nearby, GCS 8, pinpoint pupils.\" meets ESI-1 criteria: Immediate life-saving intervention required. MAP 63 mmHg \u2014 below 65 mmHg threshold for adequate organ perfusion. SpO2 87% \u2014 significant hypoxemia requiring supplemental oxygen. Severe toxic ingestion / opioid or polypharmacy overdose with respiratory depression. Contact Poison Control (1-800-222-1222). Administer IV/IN Naloxone titrated to respiratory rate \u2265 12. Continuous pulse oximetry, capnography, and 12-lead ECG for QTc prolongation. Severe neurological depression / coma identified (GCS \u2264 8 or unresponsive). Per ATLS / Emergency Neurological Life Support (ENLS) guidelines: immediate airway protection via endotracheal intubation is indicated. Check fingerstick glucose immediately, assess pupillary reactivity, and obtain emergent non-contrast head CT. Safety system triggered 4 rule(s): Severe hypoxemia, MAP dangerously low, Unresponsive / Severe Altered Consciousness, Toxic Ingestion / Overdose with Pinpoint Pupils. Required actions: Hemodynamic support, Immediate resuscitation, airway protection STAT, Oxygen therapy, Naloxone / Poison Control / Continuous cardiac monitor. AI confidence is high (94%).",
     "override": null,
     "type": "triage"
+  },
+  {
+    "event_id": "ec7917ee-942a-472f-a92f-839f4f8092ed",
+    "timestamp": "2026-08-29T22:21:00.545376+00:00",
+    "patient_id": "P-001",
+    "patient_name": "John Doe",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 1.29,
+      "mews": 4,
+      "map": 65.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 2,
+      "probabilities": [
+        0.0013937987387180328,
+        0.9981957077980042,
+        0.0002766334218904376,
+        9.046871127793565e-05,
+        4.3445794290164486e-05
+      ],
+      "confidence": 0.9981957077980042,
+      "feature_importance": {
+        "age": 0.03369544446468353,
+        "sex": 0.011612476781010628,
+        "hr": 0.030344611033797264,
+        "sbp": 0.06641260534524918,
+        "dbp": 0.013622604310512543,
+        "spo2": 0.518084704875946,
+        "rr": 0.016600346192717552,
+        "temp": 0.05051864683628082,
+        "pain": 0.03687387704849243,
+        "arrival_mode": 0.012403961271047592,
+        "shock_index": 0.09832173585891724,
+        "mews": 0.09658839553594589,
+        "map": 0.01492058765143156
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "chest pain",
+        "diaphoretic"
+      ],
+      "semantic_flags": [
+        "cardiac_critical"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 2,
+      "confidence": 0.83,
+      "probabilities": [
+        0.4507,
+        0.5342,
+        0.0051,
+        0.005,
+        0.005
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=1.29",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R016",
+        "rule_name": "Critical Cardiac Event / Arrest Threat",
+        "triggered_by": "NLP: Crushing chest pain/Syncope/Arrest",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Code Blue / 12-lead ECG STAT, cath lab activation"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "medium",
+    "final_esi": 1,
+    "final_confidence": 0.83,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Evaluate for shock, Code Blue / 12-lead ECG STAT, cath lab activation. AI confidence is moderate (83%). Clinical correlation advised.",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "ROUTE-222113",
+    "timestamp": "2026-08-29T22:21:13.631487+00:00",
+    "patient_id": "P-001",
+    "name": "John Doe",
+    "final_esi": 1,
+    "action_type": "CONFIRM_ROUTE",
+    "routing": "Resuscitation Bay",
+    "nurse_id": "RN-Sarah",
+    "type": "triage"
+  },
+  {
+    "event_id": "7d3b98fb-764e-4ab1-9da2-5c4bcfef09a9",
+    "timestamp": "2026-08-29T22:30:28.368047+00:00",
+    "patient_id": "P-001",
+    "patient_name": "John Doe",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 1.29,
+      "mews": 4,
+      "map": 65.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 2,
+      "probabilities": [
+        0.0013937987387180328,
+        0.9981957077980042,
+        0.0002766334218904376,
+        9.046871127793565e-05,
+        4.3445794290164486e-05
+      ],
+      "confidence": 0.9981957077980042,
+      "feature_importance": {
+        "age": 0.03369544446468353,
+        "sex": 0.011612476781010628,
+        "hr": 0.030344611033797264,
+        "sbp": 0.06641260534524918,
+        "dbp": 0.013622604310512543,
+        "spo2": 0.518084704875946,
+        "rr": 0.016600346192717552,
+        "temp": 0.05051864683628082,
+        "pain": 0.03687387704849243,
+        "arrival_mode": 0.012403961271047592,
+        "shock_index": 0.09832173585891724,
+        "mews": 0.09658839553594589,
+        "map": 0.01492058765143156
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "chest pain",
+        "diaphoretic"
+      ],
+      "semantic_flags": [
+        "cardiac_critical"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 2,
+      "confidence": 0.83,
+      "probabilities": [
+        0.4507,
+        0.5342,
+        0.0051,
+        0.005,
+        0.005
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=1.29",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R016",
+        "rule_name": "Critical Cardiac Event / Arrest Threat",
+        "triggered_by": "NLP: Crushing chest pain/Syncope/Arrest",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Code Blue / 12-lead ECG STAT, cath lab activation"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "medium",
+    "final_esi": 1,
+    "final_confidence": 0.83,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Evaluate for shock, Code Blue / 12-lead ECG STAT, cath lab activation. AI confidence is moderate (83%). Clinical correlation advised.",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "8540d789-4b97-4561-8919-70c30d901d3e",
+    "timestamp": "2026-08-30T16:54:43.714545+00:00",
+    "patient_id": "P-001",
+    "patient_name": "John Doe",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 1.29,
+      "mews": 4,
+      "map": 65.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 2,
+      "probabilities": [
+        0.0013937987387180328,
+        0.9981957077980042,
+        0.0002766334218904376,
+        9.046871127793565e-05,
+        4.3445794290164486e-05
+      ],
+      "confidence": 0.9981957077980042,
+      "feature_importance": {
+        "age": 0.03369544446468353,
+        "sex": 0.011612476781010628,
+        "hr": 0.030344611033797264,
+        "sbp": 0.06641260534524918,
+        "dbp": 0.013622604310512543,
+        "spo2": 0.518084704875946,
+        "rr": 0.016600346192717552,
+        "temp": 0.05051864683628082,
+        "pain": 0.03687387704849243,
+        "arrival_mode": 0.012403961271047592,
+        "shock_index": 0.09832173585891724,
+        "mews": 0.09658839553594589,
+        "map": 0.01492058765143156
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "diaphoretic",
+        "chest pain"
+      ],
+      "semantic_flags": [
+        "cardiac_critical"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 2,
+      "confidence": 0.83,
+      "probabilities": [
+        0.4507,
+        0.5342,
+        0.0051,
+        0.005,
+        0.005
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=1.29",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R016",
+        "rule_name": "Critical Cardiac Event / Arrest Threat",
+        "triggered_by": "NLP: Crushing chest pain/Syncope/Arrest",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Code Blue / 12-lead ECG STAT, cath lab activation"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "medium",
+    "final_esi": 1,
+    "final_confidence": 0.83,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Evaluate for shock, Code Blue / 12-lead ECG STAT, cath lab activation. AI confidence is moderate (83%). Clinical correlation advised.",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "ROUTE-165451",
+    "timestamp": "2026-08-30T16:54:51.687182+00:00",
+    "patient_id": "P-001",
+    "name": "John Doe",
+    "final_esi": 1,
+    "action_type": "CONFIRM_ROUTE",
+    "routing": "Resuscitation Bay",
+    "nurse_id": "RN-Sarah",
+    "type": "triage"
+  },
+  {
+    "event_id": "17b39afb-241d-4bf1-bc3c-b88c2c147bf0",
+    "timestamp": "2026-08-30T17:12:37.362787+00:00",
+    "patient_id": "P-001",
+    "patient_name": "John Doe",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 1.29,
+      "mews": 4,
+      "map": 65.0
+    },
+    "ml_prediction": {
+      "esi_prediction": 2,
+      "probabilities": [
+        0.0013937987387180328,
+        0.9981957077980042,
+        0.0002766334218904376,
+        9.046871127793565e-05,
+        4.3445794290164486e-05
+      ],
+      "confidence": 0.9981957077980042,
+      "feature_importance": {
+        "age": 0.03369544446468353,
+        "sex": 0.011612476781010628,
+        "hr": 0.030344611033797264,
+        "sbp": 0.06641260534524918,
+        "dbp": 0.013622604310512543,
+        "spo2": 0.518084704875946,
+        "rr": 0.016600346192717552,
+        "temp": 0.05051864683628082,
+        "pain": 0.03687387704849243,
+        "arrival_mode": 0.012403961271047592,
+        "shock_index": 0.09832173585891724,
+        "mews": 0.09658839553594589,
+        "map": 0.01492058765143156
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.98,
+      "urgency_level": "critical",
+      "key_phrases": [
+        "diaphoretic",
+        "chest pain"
+      ],
+      "semantic_flags": [
+        "cardiac_critical"
+      ],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 2,
+      "confidence": 0.83,
+      "probabilities": [
+        0.4507,
+        0.5342,
+        0.0051,
+        0.005,
+        0.005
+      ]
+    },
+    "safety_overrides": [
+      {
+        "rule_id": "R005",
+        "rule_name": "Shock index critical",
+        "triggered_by": "SI=1.29",
+        "override_esi": 2,
+        "severity": "high",
+        "action": "Evaluate for shock"
+      },
+      {
+        "rule_id": "R016",
+        "rule_name": "Critical Cardiac Event / Arrest Threat",
+        "triggered_by": "NLP: Crushing chest pain/Syncope/Arrest",
+        "override_esi": 1,
+        "severity": "critical",
+        "action": "Code Blue / 12-lead ECG STAT, cath lab activation"
+      }
+    ],
+    "action_type": "DECIDE",
+    "confidence_flag": "medium",
+    "final_esi": 1,
+    "final_confidence": 0.83,
+    "routing": "Resuscitation Bay",
+    "rationale": "This 55-year-old M presenting with \"Chest pain radiating to jaw, diaphoretic.\" meets ESI-1 criteria: Immediate life-saving intervention required. Shock Index critically elevated at 1.29 (HR/SBP = 110/85), indicating hemodynamic instability. SpO2 91% \u2014 significant hypoxemia requiring supplemental oxygen. Severe pain reported (9/10). Presentation consistent with acute coronary syndrome / life-threatening cardiac event. Per AHA chest pain pathway: obtain 12-lead ECG within 10 minutes of arrival, draw serial high-sensitivity troponins, administer aspirin 325mg if not contraindicated, and activate cardiac catheterization team. Safety system triggered 2 rule(s): Shock index critical, Critical Cardiac Event / Arrest Threat. Required actions: Evaluate for shock, Code Blue / 12-lead ECG STAT, cath lab activation. AI confidence is moderate (83%). Clinical correlation advised.",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "ROUTE-171241",
+    "timestamp": "2026-08-30T17:12:41.466942+00:00",
+    "patient_id": "P-001",
+    "name": "John Doe",
+    "final_esi": 1,
+    "action_type": "CONFIRM_ROUTE",
+    "routing": "Resuscitation Bay",
+    "nurse_id": "RN-Sarah",
+    "type": "triage"
+  },
+  {
+    "event_id": "5a4c0e33-9218-4b11-a221-5e290dce7bb2",
+    "timestamp": "2026-08-30T17:12:56.002144+00:00",
+    "patient_id": "P-002",
+    "patient_name": "Jane Smith",
+    "nurse_id": "RN-Sarah",
+    "pipeline_version": "2.0.0",
+    "regulatory_jurisdiction": "HIPAA (US)",
+    "age_group": "adult",
+    "derived_scores": {
+      "shock_index": 0.65,
+      "mews": 1,
+      "map": 101.67
+    },
+    "ml_prediction": {
+      "esi_prediction": 3,
+      "probabilities": [
+        0.00045700574992224574,
+        0.0035341924522072077,
+        0.9931924939155579,
+        0.0024064339231699705,
+        0.00040986461681313813
+      ],
+      "confidence": 0.9931924939155579,
+      "feature_importance": {
+        "age": 0.03369544446468353,
+        "sex": 0.011612476781010628,
+        "hr": 0.030344611033797264,
+        "sbp": 0.06641260534524918,
+        "dbp": 0.013622604310512543,
+        "spo2": 0.518084704875946,
+        "rr": 0.016600346192717552,
+        "temp": 0.05051864683628082,
+        "pain": 0.03687387704849243,
+        "arrival_mode": 0.012403961271047592,
+        "shock_index": 0.09832173585891724,
+        "mews": 0.09658839553594589,
+        "map": 0.01492058765143156
+      }
+    },
+    "nlp_extraction": {
+      "urgency_score": 0.58,
+      "urgency_level": "moderate",
+      "key_phrases": [
+        "tenderness"
+      ],
+      "semantic_flags": [],
+      "negations": []
+    },
+    "fused_prediction": {
+      "esi": 3,
+      "confidence": 0.93,
+      "probabilities": [
+        0.0048,
+        0.0379,
+        0.9063,
+        0.0418,
+        0.0092
+      ]
+    },
+    "safety_overrides": [],
+    "action_type": "RECOMMEND",
+    "confidence_flag": "high",
+    "final_esi": 3,
+    "final_confidence": 0.93,
+    "routing": "Urgent Care",
+    "rationale": "This 45-year-old M presenting with \"Burning sensation post-meal, mild epigastric tenderness.\" meets ESI-3 criteria: Multiple resources required, normal danger zone vitals. Vital signs within normal parameters. AI confidence is high (93%).",
+    "override": null,
+    "type": "triage"
+  },
+  {
+    "event_id": "ROUTE-171258",
+    "timestamp": "2026-08-30T17:12:58.963310+00:00",
+    "patient_id": "P-002",
+    "name": "Jane Smith",
+    "final_esi": 3,
+    "action_type": "CONFIRM_ROUTE",
+    "routing": "Urgent Care",
+    "nurse_id": "RN-Sarah",
+    "type": "triage"
   }
 ]

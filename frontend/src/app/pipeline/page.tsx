@@ -145,7 +145,7 @@ export default function PipelinePage() {
                 onClick={() => setActiveIdx(i)}
                 className={`p-3.5 rounded-2xl text-left transition-all duration-200 border overflow-hidden relative group cursor-pointer ${
                   isActive
-                    ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm ring-2 ring-purple-500/20'
+                    ? 'bg-purple-50/90 border-purple-300 shadow-purple-sm'
                     : 'bg-white border-slate-200/80 hover:border-purple-200 hover:bg-slate-50 shadow-card'
                 }`}
               >
@@ -293,7 +293,7 @@ export default function PipelinePage() {
                 </div>
               </div>
 
-              <pre className="p-4 bg-slate-900 text-slate-100 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed shadow-inner">
+              <pre className="p-4 bg-slate-900 text-slate-100 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed shadow-inner border border-slate-700/50">
                 <code>{active.code}</code>
               </pre>
             </div>

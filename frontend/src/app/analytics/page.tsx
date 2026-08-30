@@ -275,7 +275,7 @@ export default function AnalyticsPage() {
           { value: 100, decimals: 0, label: 'ESI-1 Recall', color: 'text-emerald-700', suffix: '%' },
           { value: 208, decimals: 0, label: 'Avg Latency', color: 'text-slate-900', suffix: 'ms' },
         ].map((kpi, i) => (
-          <GlassCard key={i} className="!p-5 text-center space-y-1">
+          <GlassCard key={i} className="!p-5 text-center space-y-1 border-t-[3px] border-t-purple-500">
             <div className={`text-3xl font-black ${kpi.color}`}>
               <AnimatedCounter value={kpi.value} decimals={kpi.decimals} suffix={kpi.suffix || ''} />
             </div>

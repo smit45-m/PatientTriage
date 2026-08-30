@@ -45,20 +45,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               localStorage.setItem(USER_KEY, JSON.stringify(meRes.user));
             }
           } catch {
-            // If backend rejects token or offline, preserve stored user or fallback
+            // Backend rejected token — clear stale auth
+            setToken(null);
+            setUser(null);
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
           }
         } else {
-          // Default initial session for hackathon demo convenience
-          const defaultDemoUser: User = {
-            id: "DOC-001",
-            email: "rohit.sharma@metro.health",
-            name: "Dr. Rohit Sharma, MD",
-            role: "Lead Emergency Physician",
-            hospital: "Metro Level I Trauma",
-            avatar: "/doctors/dr_rohit_sharma.jpg",
-            badge: "Senior Attending"
-          };
-          setUser(defaultDemoUser);
+          // No stored token — user remains unauthenticated (null)
+          setUser(null);
         }
       } catch (err) {
         console.error("Auth init error:", err);
@@ -112,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         token,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && !!token,
         isLoading,
         login,
         quickLogin,
