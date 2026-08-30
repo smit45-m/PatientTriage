@@ -1,6 +1,7 @@
 # PatientTriage.ai 🏥
 > **AI-Powered Emergency Department Clinical Decision Support System**  
-> **Team:** `DataForge_NITRourkela` (National Institute of Technology, Rourkela)  
+> **Team:** `DataForge_NITRourkela` | **Roll / Team ID:** `124ai0045`  
+> **Institution:** National Institute of Technology, Rourkela (NIT Rourkela)  
 > **Hackathon:** Accenture Innovation Challenge 2026 — Problem Statement 2 (PatientTriage.ai)
 
 ---
@@ -8,6 +9,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Accenture%20Innovation%20Challenge-2026-A100FF?style=for-the-badge&logo=accenture&logoColor=white" alt="Accenture Hackathon" />
   <img src="https://img.shields.io/badge/Team-DataForge__NITRourkela-0052CC?style=for-the-badge" alt="DataForge NIT Rourkela" />
+  <img src="https://img.shields.io/badge/Team%20ID-124ai0045-FF6B00?style=for-the-badge" alt="124ai0045" />
   <img src="https://img.shields.io/badge/Frontend-Next.js%2014%20App%20Router-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/Backend-FastAPI%20%7C%20Python%203.10+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Multi--Agent-LangGraph%20StateGraph-purple?style=for-the-badge" alt="LangGraph" />
@@ -27,7 +29,7 @@
 8. [Full API Reference](#-full-api-reference)
 9. [Tech Stack](#-tech-stack)
 10. [Local Quickstart & Execution Guide](#-local-quickstart--execution-guide)
-11. [Business Proposal & PPT](#-business-proposal--ppt)
+11. [Business Proposal & PPT / PDF](#-business-proposal--ppt--pdf)
 12. [Team & Acknowledgments](#-team--acknowledgments)
 
 ---
@@ -165,7 +167,7 @@ To ensure patient safety in high-pressure emergency environments, PatientTriage.
 | :--- | :--- | :--- |
 | **`/`** | **Executive Dashboard** | High-level clinical KPIs, 3 objective pillars, interactive 5-stage timeline visualizer, real-world case scenarios, and hospital infrastructure overview. |
 | **`/login`** | **Clinician Sign In** | 2-column medical portal inspired by modern healthcare UI with animated ECG waveform, 1-click test login for 5 demo clinicians, and JWT credential validation. |
-| **`/triage`** | **AI Triage Cockpit** | Live queue selector, vital sign cards with status alerts, 5-stage pipeline animation, **Expected vs Predicted ESI comparison**, and 1-click **Confirm & Route**. |
+| **`/triage`** | **AI Triage Cockpit** | Live queue selector, vital sign cards with status alerts, 5-stage pipeline animation, **Expected vs Predicted ESI comparison**, SBAR Clinical Handoff panel, and 1-click **Confirm & Route**. |
 | **`/analytics`** | **Performance Analytics** | **Live "Run Accuracy Benchmark" button**, per-patient prediction inspection, 5-class confusion matrix, and SOTA vs generic LLM comparison table. |
 | **`/pipeline`** | **Pipeline Inspector** | Interactive LangGraph StateGraph visualizer with code inspection tabs for each of the 5 compiled agents. |
 | **`/monitor`** | **Waiting Room Monitor** | Live waiting room queue, color-coded ESI wait-time threshold bars, deterioration breach alerts, and Mass Casualty Incident (MCI) surge toggle. |
@@ -218,9 +220,10 @@ FastAPI backend endpoints available at `http://localhost:8000`:
 - `GET /api/surge` — Get current ED arrival rate and surge mode status
 - `POST /api/surge/toggle` — Toggle Mass Casualty Incident (MCI) surge mode
 
-### Hospital Configuration
+### Hospital Configuration & System
 - `GET /api/config` — Get active hospital profile (Metro Level I Trauma vs Rural Community)
 - `POST /api/config/profile` — Switch active hospital profile
+- `GET /api/health` — Health check endpoint returning uptime & pipeline version
 
 ---
 
@@ -278,36 +281,41 @@ npm run dev
 
 ---
 
-## 📊 Business Proposal & PPT
+## 📊 Business Proposal & PPT / PDF
 
-A comprehensive **15-Slide Business Proposal & Technical Pitch Deck** has been generated and included directly in the root directory:
-- 📄 **File Path**: [`PatientTriage_BusinessProposal.pptx`](file:///c:/Users/smitp/Downloads/accenture_hackathon/PatientTriage_BusinessProposal.pptx)
-- **Slide Contents**:
-  1. *Title Slide*: `DataForge_NITRourkela` | PatientTriage.ai | Accenture Innovation Challenge 2026
-  2. *The Problem*: Global ED overcrowding, 250k+ preventable deaths, nurse burnout
-  3. *Our Solution*: 5-Stage multi-agent intelligence with clinician-in-the-loop safety
-  4. *Architecture*: LangGraph StateGraph detailed node pipeline
-  5. *Tech Stack*: Enterprise-grade FastAPI, XGBoost, Next.js 14, PyJWT
-  6. *Clinical Benchmarks*: 1,200 patient evaluation vs SOTA and raw LLMs
-  7. *Safety & Governance*: 18 red-flag rules, asymmetric loss, confidence gating
-  8. *Live Model Accuracy*: Expected vs Predicted ESI analysis (72.7% exact, 100% within-1)
-  9. *Business Model*: $12.4B market, tiered SaaS licensing, API-as-a-Service
-  10. *Competitive Advantage*: Edge deployment, zero hallucination, 7x faster than LLMs
-  11. *Platform Modules*: 7 production-ready clinical routes
-  12. *Social Impact & SDGs*: Good Health (SDG 3), Reduced Inequality (SDG 10)
-  13. *Future Roadmap*: FHIR/ABDM integration, MIMIC-IV-ED clinical validation, CDSCO/FDA SaMD
-  14. *Team*: `DataForge_NITRourkela` (National Institute of Technology, Rourkela)
-  15. *Thank You & GitHub*: Repositories and demonstration links
+Comprehensive **15-Slide Business Proposal & Pitch Decks** are included in both `.pptx` and `.pdf` formats:
+
+### Presentation Files:
+1. 📄 **PowerPoint Deck**: [`DataForge_NITRourkela.pptx`](file:///c:/Users/smitp/Downloads/accenture_hackathon/DataForge_NITRourkela.pptx) / [`124ai0045_BusinessProposal.pptx`](file:///c:/Users/smitp/Downloads/accenture_hackathon/124ai0045_BusinessProposal.pptx)
+2. 📑 **Ready-to-Upload PDF**: [`DataForge_NITRourkela_BusinessProposal.pdf`](file:///c:/Users/smitp/Downloads/accenture_hackathon/DataForge_NITRourkela_BusinessProposal.pdf) / [`124ai0045_BusinessProposal.pdf`](file:///c:/Users/smitp/Downloads/accenture_hackathon/124ai0045_BusinessProposal.pdf)
+
+### Slide Contents:
+1. *Title Slide*: `DataForge_NITRourkela` | Team ID `124ai0045` | PatientTriage.ai | Accenture Innovation Challenge 2026
+2. *The Problem*: Global ED overcrowding, 250k+ preventable deaths, nurse burnout
+3. *Our Solution*: 5-Stage multi-agent intelligence with clinician-in-the-loop safety
+4. *Architecture*: LangGraph StateGraph detailed node pipeline
+5. *Tech Stack*: Enterprise-grade FastAPI, XGBoost, Next.js 14, PyJWT
+6. *Clinical Benchmarks*: 1,200 patient evaluation vs SOTA and raw LLMs
+7. *Safety & Governance*: 18 red-flag rules, asymmetric loss, confidence gating
+8. *Live Model Accuracy*: Expected vs Predicted ESI analysis (72.7% exact, 100% within-1)
+9. *Business Model*: $12.4B market, tiered SaaS licensing, API-as-a-Service
+10. *Competitive Advantage*: Edge deployment, zero hallucination, 7x faster than LLMs
+11. *Platform Modules*: 7 production-ready clinical routes
+12. *Social Impact & SDGs*: Good Health (SDG 3), Reduced Inequality (SDG 10)
+13. *Future Roadmap*: FHIR/ABDM integration, MIMIC-IV-ED clinical validation, CDSCO/FDA SaMD
+14. *Team*: `DataForge_NITRourkela` (Team ID: `124ai0045`, NIT Rourkela)
+15. *Thank You & GitHub*: Repositories and demonstration links
 
 ---
 
 ## 👥 Team & Acknowledgments
 
 - **Team Name**: `DataForge_NITRourkela`
+- **Team / Roll ID**: `124ai0045`
 - **Institution**: National Institute of Technology, Rourkela (NIT Rourkela)
 - **Hackathon**: Accenture Innovation Challenge 2026
 - **Problem Statement**: Problem Statement 2 — PatientTriage.ai (Emergency Acuity Classification & Decision Support)
 - **Repository**: [https://github.com/smit45-m/PatientTriage.git](https://github.com/smit45-m/PatientTriage.git)
 
 ---
-*Built with ❤️ for clinician safety and emergency patient care.*
+*Built with ❤️ by DataForge_NITRourkela (124ai0045) for clinician safety and emergency patient care.*
